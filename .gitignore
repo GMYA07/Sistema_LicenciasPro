@@ -1,0 +1,23 @@
+# Dependencias Composer
+/vendor/
+
+# Variables de entorno
+.env
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Node modules (si usarás Tailwind con npm)
+node_modules/
+
+# Archivos temporales
+/tmp/
+/cache/
+
+# Configs de editores
+.vscode/
+.idea/

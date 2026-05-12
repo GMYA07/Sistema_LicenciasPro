@@ -1,0 +1,17 @@
+{
+    "name": "2021-cri-397/sistema_licencias_pro",
+    "autoload": {
+        "psr-4": {
+            "2021Cri397\\SistemaLicenciasPro\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Yael Matamoros",
+            "email": "89718678+GMYA07@users.noreply.github.com"
+        }
+    ],
+    "require": {
+        "vlucas/phpdotenv": "^5.6"
+    }
+}
