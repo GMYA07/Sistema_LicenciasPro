@@ -6,6 +6,5 @@
     <title>Sistema Licencias Pro</title>
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/style.css">
 </head>
-<body class="bg-gray-100 text-gray-800">
-
-<div class="flex h-screen">
+<body class="bg-stone-100 text-stone-800 font-sans flex h-screen overflow-hidden">
+<main class="flex-1 overflow-x-hidden overflow-y-auto relative w-full">

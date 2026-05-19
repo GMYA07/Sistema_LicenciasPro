@@ -1,3 +1,2 @@
-    </div> <!-- cierra flex h-screen -->
-</body>
+</main> </body>
 </html>
