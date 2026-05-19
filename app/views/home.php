@@ -1,7 +1,8 @@
 <?php include 'inc/Header.php'; ?>
+<?php include 'inc/Sidebar.php'; ?>
 
-<div class="min-h-screen bg-gray-100 flex items-center justify-center">
-    <h1 class="text-4xl font-bold text-blue-600">
-        Sistema Licencias Pro
-    </h1>
-</div>
+    <main class="flex-1 p-8 overflow-y-auto">
+        <h1 class="text-2xl font-bold">Bienvenido al sistema</h1>
+    </main>
+
+<?php include 'inc/Footer.php'; ?>
