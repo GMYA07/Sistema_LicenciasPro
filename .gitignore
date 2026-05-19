@@ -13,6 +13,7 @@ Thumbs.db
 
 # Node modules (si usarás Tailwind con npm)
 node_modules/
+public/assets/css/style.css
 
 # Archivos temporales
 /tmp/

@@ -1,0 +1,16 @@
+{
+  "name": "sistema_licenciaspro",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev":   "tailwindcss -i ./public/assets/css/input.css -o ./public/assets/css/style.css --watch",
+    "build": "tailwindcss -i ./public/assets/css/input.css -o ./public/assets/css/style.css --minify"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "tailwindcss": "^3.4.19"
+  }
+}
