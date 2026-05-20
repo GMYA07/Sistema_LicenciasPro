@@ -31,4 +31,22 @@ class EquiposController {
         include '../app/views/equipos/equipos_area.php';
 
     }
+
+    public function mostrarCrearEquipo(){
+
+        $idArea = $_GET['idArea'] ?? null;
+
+        if (!$idArea) {
+            // Si alguien entra sin ID, lo mandamos a la página principal
+            header('Location:'.BASE_URL.'/equipos');
+            exit;
+        }
+
+        $modeloArea = new AreasModel();
+        $infoArea = $modeloArea->obtenerArea($idArea);
+
+        include '../app/views/equipos/equipos_crear.php';
+
+    }
+
 }

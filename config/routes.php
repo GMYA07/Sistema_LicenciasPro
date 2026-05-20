@@ -9,5 +9,6 @@ $router->get('/home', 'HomeController', 'index', 'auth');
 
 $router->get('/equipos', 'EquiposController', 'index', 'auth');
 $router->get('/equipos/area', 'EquiposController', 'mostrarEquiposArea', 'auth');
+$router->get('/equipos/area/create','EquiposController','','auth');
 
 $router->get('/licencias','LicenciasController','index','auth');
