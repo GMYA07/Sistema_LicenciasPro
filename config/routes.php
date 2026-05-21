@@ -9,6 +9,11 @@ $router->get('/home', 'HomeController', 'index', 'auth');
 
 $router->get('/equipos', 'EquiposController', 'index', 'auth');
 $router->get('/equipos/area', 'EquiposController', 'mostrarEquiposArea', 'auth');
-$router->get('/equipos/area/create','EquiposController','','auth');
+$router->get('/equipos/area/create','EquiposController','mostrarCrearEquipo','auth');
+$router->post('/equipos/area/create','EquiposController','guardarEquipo','auth');
+$router->get('/equipos/area/edit','EquiposController','mostrarEditarEquipo','auth');
+$router->post('/equipos/area/edit','EquiposController','actualizarEquipo','auth');
+$router->get('/equipos/area/delete','EquiposController','eliminarEquipo','auth');
+
 
 $router->get('/licencias','LicenciasController','index','auth');
