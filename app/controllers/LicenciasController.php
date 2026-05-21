@@ -28,8 +28,13 @@ class LicenciasController {
             $codigoLicencia = $_POST['codigoLicencia'] ?? null;
             $estadoLicencia = $_POST['estadoLicencia'] ?? 'No instalada';
 
-            // Usamos el modelo que ya creaste para guardar
-            $resultado = $this->licenciasModel->guardarLicencia($idTipoLicencia, $codigoLicencia, $estadoLicencia);
+            $idLicencia = $_POST['idLicencia'] ?? null;
+            // Si llega un ID, actualizamos; si no, creamos una nueva licencia.
+            if (!empty($idLicencia) && is_numeric($idLicencia)) {
+                $resultado = $this->licenciasModel->actualizarLicencia($idLicencia, $idTipoLicencia, $codigoLicencia, $estadoLicencia);
+            } else {
+                $resultado = $this->licenciasModel->guardarLicencia($idTipoLicencia, $codigoLicencia, $estadoLicencia);
+            }
 
             if ($resultado) {
                 // Si se guardó con éxito, redireccionamos a la página principal para ver los cambios

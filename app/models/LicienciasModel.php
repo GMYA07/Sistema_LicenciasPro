@@ -25,8 +25,25 @@ class LicenciasModel {
         return $this->db->getConnection()->lastInsertId();
     }
 
+    public function actualizarLicencia($idLicencia, $idTipoLicencia, $codigoLicencia, $estadoLicencia) {
+        $stmt = $this->db->getConnection()->prepare("
+            UPDATE Licencias
+            SET idTipoLicencia = :idTipoLicencia,
+                codigoLicencia = :codigoLicencia,
+                estadoLicencia = :estadoLicencia
+            WHERE idLicencia = :idLicencia
+        ");
+
+        return $stmt->execute([
+            'idLicencia' => $idLicencia,
+            'idTipoLicencia' => $idTipoLicencia,
+            'codigoLicencia' => $codigoLicencia,
+            'estadoLicencia' => $estadoLicencia,
+        ]);
+    }
+
     public function getAll() {
-        $sql = "SELECT l.idLicencia, l.codigoLicencia, l.estadoLicencia, t.nombreTipoLicencia 
+        $sql = "SELECT l.idLicencia, l.idTipoLicencia, l.codigoLicencia, l.estadoLicencia, t.nombreTipoLicencia 
                 FROM Licencias l
                 JOIN TipoLicencias t ON l.idTipoLicencia = t.idTipoLicencia";
         $resultado = $this->db->getConnection()->query($sql);

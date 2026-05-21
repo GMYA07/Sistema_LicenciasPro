@@ -90,7 +90,7 @@ document.getElementById('formNuevoTipo').addEventListener('submit', function(eve
     
     // 1. Obtenemos el ID oculto limpiando espacios. 
     // Recuerda verificar que tu input oculto tenga id="idTipoLicencia"
-    const idValue = document.getElementById('idTipoLicencia').value.trim();
+    const idValue = document.getElementById('idTipoLicenciaTipo').value.trim();
 
     // En el servidor `guardarTipo` maneja creación y edición según venga `idTipoLicencia`.
     const rutaDestino = '/Sistema_LicenciasPro/public/licencias/guardarTipo?ajax=1';
@@ -121,7 +121,7 @@ document.getElementById('formNuevoTipo').addEventListener('submit', function(eve
 // ==========================================
 function editarTipo(id, nombre) {
     // 1. Rellenamos los inputs con los datos de la fila seleccionada
-    document.getElementById('idTipoLicencia').value = id;
+    document.getElementById('idTipoLicenciaTipo').value = id;
     document.getElementById('nombreTipoLicencia').value = nombre;
 
     // 2. Cambiamos el texto del título (Label) a color ámbar/naranja
@@ -149,7 +149,7 @@ function editarTipo(id, nombre) {
 // FUNCIÓN PARA LIMPIAR / CANCELAR EDICIÓN
 // ==========================================
 function limpiarFormularioTipo() {
-    document.getElementById('idTipoLicencia').value = '';
+    document.getElementById('idTipoLicenciaTipo').value = '';
     document.getElementById('nombreTipoLicencia').value = '';
 
     const label = document.getElementById('labelFormTipo');
@@ -196,4 +196,38 @@ function confirmEliminar(id) {
         console.error(err);
         alert('Error al eliminar el tipo.');
     });
+}
+
+// funcion para editar licencia (similar a editar tipo pero con más campos)
+function prepararEdicion(boton) {
+    // 1. Jalamos los datos desde los atributos 'data-*' del botón de forma segura
+    const id = boton.dataset.id;
+    const tipo = boton.dataset.tipo;
+    const codigo = boton.dataset.codigo;
+    const estado = boton.dataset.estado;
+
+    // 2. Rellenamos los inputs de tu formulario único de licencias
+    const idLicenciaInput = document.getElementById('idLicencia');
+    const tipoLicenciaSelect = document.getElementById('idTipoLicencia');
+    const codigoLicenciaInput = document.getElementById('codigoLicencia');
+    const estadoLicenciaSelect = document.getElementById('estadoLicencia');
+
+    if (idLicenciaInput) idLicenciaInput.value = id;
+    if (tipoLicenciaSelect) tipoLicenciaSelect.value = tipo;
+    if (codigoLicenciaInput) codigoLicenciaInput.value = codigo;
+    
+    if (estadoLicenciaSelect) {
+        estadoLicenciaSelect.value = estado;
+    }
+
+    // 3. Transformamos el botón del formulario a modo "Actualizar"
+    const btnSubmit = document.getElementById('btnSubmitLicencia');
+    if (btnSubmit) {
+        btnSubmit.innerText = 'Actualizar';
+        btnSubmit.style.backgroundColor = '#D97706'; // Color naranja de edición
+        btnSubmit.style.color = '#FFFFFF';
+    }
+
+    // 4. Abrimos el modal una vez cargados los datos
+    abrirModal('modalLicencia'); 
 }
