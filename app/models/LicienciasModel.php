@@ -43,9 +43,16 @@ class LicenciasModel {
     }
 
     public function getAll() {
-        $sql = "SELECT l.idLicencia, l.idTipoLicencia, l.codigoLicencia, l.estadoLicencia, t.nombreTipoLicencia 
-                FROM Licencias l
-                JOIN TipoLicencias t ON l.idTipoLicencia = t.idTipoLicencia";
+        $sql = "SELECT 
+            s.idLicencia, 
+            s.idTipoLicencia, 
+            t.nombreTipoLicencia, 
+            s.codigoLicencia, 
+            s.estadoLicencia 
+        FROM Licencias s
+        INNER JOIN TipoLicencias t ON t.idTipoLicencia = s.idTipoLicencia
+        ORDER BY FIELD(s.estadoLicencia, 'Vigente', 'No Instalada', 'Expirada') ASC";
+            
         $resultado = $this->db->getConnection()->query($sql);
         return $resultado->fetchAll(PDO::FETCH_ASSOC);
     }

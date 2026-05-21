@@ -67,15 +67,83 @@
         </div>
 
         <!-- TABLA DE LICENCIAS -->
-        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden flex-1 flex flex-col">
+<div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden flex-1 flex flex-col">
 
-            <!-- Header tabla -->
-            <div class="px-5 py-4 border-b border-gray-200 flex items-center justify-between bg-white">
-                <div>
-                    <h2 class="text-sm font-semibold text-gray-800">Inventario Global de Licencias</h2>
-                    <p class="text-xs text-gray-400">Software registrado, claves de producto y asignaciones</p>
-                </div>
+    <!-- Header tabla -->
+    <div class="px-5 py-4 border-b border-gray-200 bg-white">
+
+        <div class="flex items-center justify-between gap-4">
+
+            <!-- Título -->
+            <div>
+                <h2 class="text-sm font-semibold text-gray-800">
+                    Inventario Global de Licencias
+                </h2>
+
+                <p class="text-xs text-gray-400">
+                    Software registrado, claves de producto y asignaciones
+                </p>
             </div>
+
+            <!-- Buscador + filtro -->
+            <div class="flex items-center gap-3 flex-1 justify-end">
+
+                <!-- Barra de búsqueda -->
+                <div class="relative w-full max-w-2xl">
+
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg class="h-4 w-4 text-gray-400"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor">
+
+                            <path stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </div>
+
+                    <input
+                        type="text"
+                        placeholder="Buscar licencia, software o clave..."
+                        class="w-full bg-gray-50 border border-gray-200 text-gray-700 placeholder:text-gray-400 text-sm rounded-xl pl-10 pr-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500 transition">
+                </div>
+
+                <!-- Filtro -->
+                <div class="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 whitespace-nowrap">
+
+                    <label for="filtro-estado"
+                        class="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                        Estado
+                    </label>
+
+                    <select id="filtro-estado"
+                        class="bg-transparent text-sm text-gray-700 focus:outline-none cursor-pointer">
+
+                        <option value="">Todos</option>
+                        <option value="Vigente">Vigente</option>
+                        <option value="No Instalada">No Instalada</option>
+                        <option value="Expirada">Expirada</option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+    
+</div>
+            </div>
+
+
 
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200 align-middle">
@@ -142,9 +210,6 @@
                                             data-estado="<?php echo htmlspecialchars($licencia['estadoLicencia'], ENT_QUOTES, 'UTF-8'); ?>"
                                             onclick="prepararEdicion(this)">
                                         Editar
-                                    </button>
-                                    <button type="button" class="text-xs font-semibold text-red-600 hover:underline bg-transparent border-0 p-0">
-                                        Eliminar
                                     </button>
                                 </td>
                             </tr>
@@ -291,6 +356,7 @@
                             </button>
                         </div>
                 </form>
+
 
                 <!-- Tabla de Tipos Existentes -->
                 <div class="flex flex-col">
