@@ -89,6 +89,16 @@ class EquiposController {
             exit;
         }
 
+        $modeloArea = new AreasModel();
+        $area  = $modeloArea->obtenerArea($idArea);
+
+        if($area['totalComputadoras'] >= $area['numEquipos']){
+            $_SESSION['mensaje_error'] = "El area llego al maximo de equipos para ingresar.";
+
+            header('Location: ' . BASE_URL . '/equipos');
+            exit;
+        }
+
         $data = [
             'Marca' => $marca,
             'Modelo' => $modelo,
@@ -154,8 +164,6 @@ class EquiposController {
             exit;
         }
 
-
-
     }
 
     public function eliminarEquipo(){
@@ -181,5 +189,6 @@ class EquiposController {
         exit;
 
     }
+
 
 }

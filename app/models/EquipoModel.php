@@ -21,13 +21,6 @@ class EquipoModel{
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function eliminarEquipo($idEquipo)
-    {
-        $stmt = $this->db->getConnection()->prepare("DELETE FROM computadoras WHERE idComputadora = :id");
-        return $stmt->execute(['id' => $idEquipo]);
-
-    }
-
     public function guardarEquipo($data){
 
         $stmt = $this->db->getConnection()->prepare("INSERT INTO computadoras (idAreaComputadora, Marca, Modelo, Serial, estadoComputadora) VALUES (:idArea, :marca, :modelo, :serial, :estado)");
@@ -41,10 +34,18 @@ class EquipoModel{
 
     }
 
+    public function eliminarEquipo($idEquipo)
+    {
+        $stmt = $this->db->getConnection()->prepare("DELETE FROM computadoras WHERE idComputadora = :id");
+        return $stmt->execute(['id' => $idEquipo]);
+
+    }
+
     public function editarEquipo($data){
 
-        $stmt = $this->db->getConnection()->prepare("UPDATE computadoras SET Marca = :marca, Modelo = :modelo, Serial = :serial, estadoComputadora = :estado WHERE idComputadora = :id");
+        $stmt = $this->db->getConnection()->prepare("UPDATE computadoras SET idAreaComputadora = :area, Marca = :marca, Modelo = :modelo, Serial = :serial, estadoComputadora = :estado WHERE idComputadora = :id");
         $stmt->bindParam(":id", $data['idComputadora']);
+        $stmt->bindParam(":area", $data['idAreaComputadora']);
         $stmt->bindParam(":marca", $data['Marca']);
         $stmt->bindParam(":modelo", $data['Modelo']);
         $stmt->bindParam(":serial", $data['Serial']);
