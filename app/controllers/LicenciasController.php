@@ -95,4 +95,13 @@ class LicenciasController {
             }
         }
     }
+
+    // Resivie datos para la carta de estadisticas de la vista de licencias
+    public function obtenerEstadisticas() {
+        $estadisticas = $this->licenciasModel->contarLicenciasPorEstado();
+        header('Content-Type: application/json');
+        echo json_encode($estadisticas);
+        exit;
+    }
+    
 }

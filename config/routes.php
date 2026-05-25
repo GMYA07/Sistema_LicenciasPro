@@ -18,6 +18,9 @@ $router->get('/equipos/area/delete','EquiposController','eliminarEquipo','auth')
 
 $router->get('/licencias','LicenciasController','index','auth');
 
+// Endpoint para estadísticas de licencias (cartas)
+$router->get('/licencias/obtenerEstadisticas','LicenciasController','obtenerEstadisticas','auth');
+
 // Rutas para guardar licencias y tipos (formularios/modales)
 $router->post('/licencias/guardar', 'LicenciasController', 'guardar', 'auth');
 $router->post('/licencias/guardarTipo', 'LicenciasController', 'guardarTipo', 'auth');
