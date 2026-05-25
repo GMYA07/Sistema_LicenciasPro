@@ -23,3 +23,4 @@ $router->post('/licencias/guardar', 'LicenciasController', 'guardar', 'auth');
 $router->post('/licencias/guardarTipo', 'LicenciasController', 'guardarTipo', 'auth');
 // Eliminar tipo
 $router->post('/licencias/eliminarTipo', 'LicenciasController', 'eliminarTipo', 'auth');
+
