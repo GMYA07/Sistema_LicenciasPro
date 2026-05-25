@@ -45,7 +45,16 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
                 <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Marca</label>
-                <input type="text" name="Marca" required placeholder="Ej: Dell, HP, Lenovo" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#2CA1C8] focus:ring-1 focus:ring-[#2CA1C8] focus:bg-white transition-all">
+                <div class="relative">
+                    <select name="Marca" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-700 focus:outline-none focus:border-[#2CA1C8] focus:ring-1 focus:ring-[#2CA1C8] focus:bg-white transition-all appearance-none">
+                        <option value="Dell" selected>Dell</option>
+                        <option value="Lenovo">Lenovo</option>
+                        <option value="HP">HP</option>
+                    </select>
+                    <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-gray-400">
+                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                    </div>
+                </div>
             </div>
 
             <div>
@@ -66,7 +75,6 @@
                     <select name="estadoComputadora" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-700 focus:outline-none focus:border-[#2CA1C8] focus:ring-1 focus:ring-[#2CA1C8] focus:bg-white transition-all appearance-none">
                         <option value="activa" selected>Activa</option>
                         <option value="mantenimiento">En Mantenimiento</option>
-                        <option value="desactiva">De Baja</option>
                     </select>
                     <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-gray-400">
                         <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>

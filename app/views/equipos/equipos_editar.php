@@ -10,7 +10,7 @@
         </div>
 
         <div>
-            <h1 class="text-2xl font-bold text-[#0C3B4C]">Editar Equipo?></h1>
+            <h1 class="text-2xl font-bold text-[#0C3B4C]">Editar Equipo</h1>
             <p class="text-sm text-gray-500 font-medium mt-1">Edicion de equipos</p>
         </div>
     </div>
@@ -49,7 +49,22 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
                 <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Marca</label>
-                <input type="text" name="Marca" value="<?= $computadora['Marca']?>" required placeholder="Ej: Dell, HP, Lenovo" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#2CA1C8] focus:ring-1 focus:ring-[#2CA1C8] focus:bg-white transition-all">
+                <div class="relative">
+                    <select name="Marca" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-700 focus:outline-none focus:border-[#2CA1C8] focus:ring-1 focus:ring-[#2CA1C8] focus:bg-white transition-all appearance-none">
+                        <option value="Dell" <?= ($computadora['Marca'] == 'Dell') ? 'selected' : '' ?>>
+                            Dell
+                        </option>
+                        <option value="Lenovo" <?= ($computadora['Marca'] == 'Lenovo') ? 'selected' : '' ?>>
+                            Lenovo
+                        </option>
+                        <option value="HP" <?= ($computadora['Marca'] == 'HP') ? 'selected' : '' ?>>
+                            HP
+                        </option>
+                    </select>
+                    <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-gray-400">
+                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                    </div>
+                </div>
             </div>
 
             <div>
@@ -74,10 +89,6 @@
                         <option value="mantenimiento" <?= ($computadora['estadoComputadora'] == 'mantenimiento') ? 'selected' : '' ?>>
                             En Mantenimiento
                         </option>
-                        <option value="desactiva" <?= ($computadora['estadoComputadora'] == 'desactiva') ? 'selected' : '' ?>>
-                            De Baja
-                        </option>
-
                     </select>
                     <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-gray-400">
                         <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>

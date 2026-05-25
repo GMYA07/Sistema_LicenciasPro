@@ -10,7 +10,7 @@ class AreasModel {
 
     public function obtenerArea($idArea) {
 
-        $stmt = $this->db->getConnection()->prepare("SELECT idArea, nombreArea, edificio, numEquipos, estadoCentroComputo FROM areas WHERE idArea = :id");
+        $stmt = $this->db->getConnection()->prepare("SELECT idArea, nombreArea, edificio, numEquipos, estadoCentroComputo, (SELECT COUNT(*) FROM computadoras WHERE idAreaComputadora = areas.idArea) AS totalComputadoras FROM areas WHERE idArea = :id");
 
         // Ejecutamos pasando el parámetro
         $stmt->execute(['id' => $idArea]);
@@ -23,7 +23,14 @@ class AreasModel {
     }
     public function obtenerAreas(){
 
-        $sql = "SELECT idArea, nombreArea, edificio, numEquipos, estadoCentroComputo FROM areas";
+        $sql = "SELECT 
+                idArea, 
+                nombreArea, 
+                edificio, 
+                numEquipos, 
+                estadoCentroComputo,
+                (SELECT COUNT(*) FROM computadoras WHERE idAreaComputadora = areas.idArea) AS totalComputadoras
+            FROM areas";
         $resultado = $this->db->getConnection()->query($sql);
 
         //retornamos un arreglo de datos
