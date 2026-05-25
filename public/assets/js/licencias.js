@@ -16,6 +16,68 @@
             modal.classList.add('hidden');
         }
 
+        function normalizarTexto(valor) {
+            return (valor || '')
+                .toString()
+                .toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .trim();
+        }
+
+        function filtrarLicencias() {
+            const buscador = document.getElementById('buscarLicencia');
+            const filtroEstado = document.getElementById('filtro-estado');
+            const filas = document.querySelectorAll('tbody tr[data-search]');
+            const filaSinResultados = document.getElementById('sinResultadosLicencias');
+
+            const textoBusqueda = normalizarTexto(buscador ? buscador.value : '');
+            const estadoSeleccionado = normalizarTexto(filtroEstado ? filtroEstado.value : '');
+
+            let visibles = 0;
+
+            filas.forEach((fila) => {
+                const contenidoFila = normalizarTexto(fila.dataset.search);
+                const estadoFila = normalizarTexto(fila.dataset.estado);
+
+                const coincideTexto = textoBusqueda === '' || contenidoFila.includes(textoBusqueda);
+                const coincideEstado = estadoSeleccionado === '' || estadoFila === estadoSeleccionado;
+                const mostrar = coincideTexto && coincideEstado;
+
+                fila.classList.toggle('hidden', !mostrar);
+
+                if (mostrar) {
+                    visibles += 1;
+                }
+            });
+
+            if (filaSinResultados) {
+                filaSinResultados.classList.toggle('hidden', visibles !== 0);
+            }
+        }
+
+        function aplicarBotonGuardar(btn, modoEdicion, textoDefault, textoEdicion, iconoEdicion) {
+            if (!btn) return;
+
+            btn.classList.remove('bg-[#2CA1C8]', 'hover:bg-[#1E85A8]', 'bg-[#D97706]', 'hover:bg-[#B45309]');
+            btn.classList.add('inline-flex', 'items-center', 'gap-2');
+
+            if (modoEdicion) {
+                btn.classList.add('bg-[#D97706]', 'hover:bg-[#B45309]');
+                btn.innerHTML = iconoEdicion || '';
+                btn.innerHTML += `<span>${textoEdicion || 'Actualizar'}</span>`;
+            } else {
+                btn.classList.add('bg-[#2CA1C8]', 'hover:bg-[#1E85A8]');
+                if (typeof textoDefault === 'string' && textoDefault.includes('<svg')) {
+                    btn.innerHTML = textoDefault;
+                } else {
+                    btn.innerText = textoDefault || btn.textContent.trim();
+                }
+            }
+
+            btn.style.color = '#FFFFFF';
+        }
+
         // Lógica especial para alternar fluidamente entre Modales superpuestos
         function abrirSubModal() {
             // Ocultamos el primer modal momentáneamente
@@ -43,6 +105,19 @@
                 cerrarSubModal();
             }
         }
+
+        const buscadorLicencias = document.getElementById('buscarLicencia');
+        const filtroEstadoLicencias = document.getElementById('filtro-estado');
+
+        if (buscadorLicencias) {
+            buscadorLicencias.addEventListener('input', filtrarLicencias);
+        }
+
+        if (filtroEstadoLicencias) {
+            filtroEstadoLicencias.addEventListener('change', filtrarLicencias);
+        }
+
+        filtrarLicencias();
 
         // agregar licencia
 
@@ -132,14 +207,7 @@ function editarTipo(id, nombre) {
     // 3. Forzamos los colores correctos en el botón de Actualizar
     const btnSubmit = document.getElementById('btnSubmitTipo');
     btnSubmit.innerText = 'Actualizar';
-    
-    // Asignamos fondo naranja y texto blanco de forma explícita
-    btnSubmit.style.backgroundColor = '#D97706'; 
-    btnSubmit.style.color = '#FFFFFF';
-    
-    // Añadimos un efecto hover manual por si acaso
-    btnSubmit.onmouseover = function() { this.style.backgroundColor = '#B45309'; };
-    btnSubmit.onmouseout = function() { this.style.backgroundColor = '#D97706'; };
+    aplicarBotonGuardar(btnSubmit, true, 'Añadir', 'Actualizar', '');
 
     // 4. Mostramos el botón de Cancelar quitándole la clase 'hidden'
     document.getElementById('btnCancelarEdicion').classList.remove('hidden');
@@ -158,11 +226,7 @@ function limpiarFormularioTipo() {
 
     const btnSubmit = document.getElementById('btnSubmitTipo');
     btnSubmit.innerText = 'Añadir';
-    btnSubmit.style.backgroundColor = '#2CA1C8';
-    btnSubmit.style.color = '#FFFFFF';
-    
-    btnSubmit.onmouseover = function() { this.style.backgroundColor = '#1E85A8'; };
-    btnSubmit.onmouseout = function() { this.style.backgroundColor = '#2CA1C8'; };
+    aplicarBotonGuardar(btnSubmit, false, 'Añadir', 'Actualizar', '');
 
     document.getElementById('btnCancelarEdicion').classList.add('hidden');
 }
@@ -223,11 +287,102 @@ function prepararEdicion(boton) {
     // 3. Transformamos el botón del formulario a modo "Actualizar"
     const btnSubmit = document.getElementById('btnSubmitLicencia');
     if (btnSubmit) {
-        btnSubmit.innerText = 'Actualizar';
-        btnSubmit.style.backgroundColor = '#D97706'; // Color naranja de edición
-        btnSubmit.style.color = '#FFFFFF';
+        aplicarBotonGuardar(
+            btnSubmit,
+            false,
+            '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16h2a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v7a2 2 0 002 2h2m3 4h4m-2-4v4m-7-8h10" /></svg> Guardar Licencia',
+            '',
+            ''
+        );
     }
 
     // 4. Abrimos el modal una vez cargados los datos
-    abrirModal('modalLicencia'); 
+    abrirModal('modalLicencia');
+
 }
+
+// Cargar estadísticas para las cartas (consulta al backend)
+async function cargarEstadisticas() {
+
+    const vigElem = document.getElementById('licenciasVigentesCount');
+    const disElem = document.getElementById('licenciasDisponiblesCount');
+    const expElem = document.getElementById('licenciasExpiradasCount');
+
+    // Estado inicial
+    if (vigElem) vigElem.textContent = '...';
+    if (disElem) disElem.textContent = '...';
+    if (expElem) expElem.textContent = '...';
+
+    try {
+
+        const base = window.BASE_URL || '';
+        const url = `${base}/licencias/obtenerEstadisticas`;
+
+        console.log('Cargando estadísticas desde:', url);
+
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status}`);
+        }
+
+        const datos = await response.json();
+
+        console.log('Datos recibidos:', datos);
+
+        const counts = {
+            vigente: 0,
+            disponible: 0,
+            expirada: 0
+        };
+
+        if (Array.isArray(datos)) {
+
+            datos.forEach(row => {
+
+                const estado = (row.estadoLicencia || '')
+                    .toString()
+                    .trim()
+                    .toLowerCase();
+
+                const cantidad = parseInt(row.cantidad, 10) || 0;
+
+                if (estado.includes('vigente')) {
+
+                    counts.vigente += cantidad;
+
+                } else if (estado.includes('no instalada')) {
+
+                    counts.disponible += cantidad;
+
+                } else if (estado.includes('expirada')) {
+
+                    counts.expirada += cantidad;
+
+                }
+
+            });
+
+        }
+
+        // Actualizar cards
+        if (vigElem) vigElem.textContent = counts.vigente;
+        if (disElem) disElem.textContent = counts.disponible;
+        if (expElem) expElem.textContent = counts.expirada;
+
+        console.log('Cards actualizadas:', counts);
+
+    } catch (error) {
+
+        console.error('Error al cargar estadísticas:', error);
+
+        if (vigElem) vigElem.textContent = '0';
+        if (disElem) disElem.textContent = '0';
+        if (expElem) expElem.textContent = '0';
+
+    }
+
+}
+
+// Ejecutar automáticamente
+document.addEventListener('DOMContentLoaded', cargarEstadisticas);
