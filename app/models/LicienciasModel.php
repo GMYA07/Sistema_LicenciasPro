@@ -56,6 +56,13 @@ class LicenciasModel {
         $resultado = $this->db->getConnection()->query($sql);
         return $resultado->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    // consultas para cartas de estadistias de la vista de licencias
+    public function contarLicenciasPorEstado() {
+        $sql = "SELECT estadoLicencia, COUNT(*) AS cantidad FROM Licencias GROUP BY estadoLicencia";
+        $resultado = $this->db->getConnection()->query($sql);
+        return $resultado->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
 
 ?>
