@@ -356,7 +356,7 @@
 
             <!-- Botones Acciones -->
             <div class="flex items-center justify-end gap-3 mt-4 pt-4 border-t border-gray-100">
-                <button type="button" onclick="cerrarModal('modalLicencia')"
+                <button type="button" onclick="cerrarModal('    ')"
                     class="px-4 py-2.5 text-sm font-semibold text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-xl transition-all cursor-pointer">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block mr-2" fill="none"
                         viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">

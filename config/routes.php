@@ -29,3 +29,7 @@ $router->post('/licencias/eliminarTipo', 'LicenciasController', 'eliminarTipo', 
 
 // Rutas para áreas
 $router->get('/areas', 'AreasController', 'index', 'auth');
+$router->post('/areas/guardar', 'AreasController', 'guardar', 'auth');
+
+// Ruta para eliminar un área
+$router->post('/areas/delete', 'AreasController', 'delete', 'auth');
