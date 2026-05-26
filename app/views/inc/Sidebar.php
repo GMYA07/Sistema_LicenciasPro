@@ -1,5 +1,4 @@
-<aside
-    class="w-64 bg-[#0C3B4C] text-[#E6E6E6] flex flex-col justify-between shadow-xl transition-all duration-300 h-screen">
+<aside class="w-64 bg-[#0C3B4C] text-[#E6E6E6] flex flex-col justify-between shadow-xl transition-all duration-300 h-screen">
 
     <div>
         <div class="flex flex-col items-center pt-6 pb-2 border-b border-[#1E85A8]/50">
@@ -66,14 +65,11 @@
     </div>
 
     <div class="p-4 border-t border-[#1E85A8]/50">
-        <a href="<?= BASE_URL ?>/logout"
-            class="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-[#E6E6E6] hover:text-white hover:bg-rose-600 transition-all duration-300 group">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:-translate-x-1 transition-transform"
-                fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+        <a href="<?= BASE_URL ?>/logout" class="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-[#E6E6E6] hover:text-white hover:bg-rose-600 transition-all duration-300 group">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
             </svg>
-            <span class="text-sm font-semibold">Salir, <?= $_SESSION['usuario_nombre'] ?></span>
+            <span class="text-sm font-semibold">Salir, <?=$_SESSION['usuario_nombre']?></span>
         </a>
     </div>
 
