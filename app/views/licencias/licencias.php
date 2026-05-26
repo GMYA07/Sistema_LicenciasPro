@@ -75,7 +75,7 @@
         </div>
         <div class="flex items-baseline gap-2 mt-1">
             <!-- SE AGREGÓ ID -->
-            <p id="licenciasExpiradasCount" class="text-2xl font-bold text-red-600">0</p>
+            <p id="licenciasExpiradasCount" class="text-2xl font-bold" style="color:#1E85A8;">0</p>
             <p class="text-[11px] text-gray-400 font-medium truncate">Requieren renovación ...</p>
         </div>
     </div>
