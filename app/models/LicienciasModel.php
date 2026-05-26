@@ -63,6 +63,9 @@ class LicenciasModel {
         $resultado = $this->db->getConnection()->query($sql);
         return $resultado->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function obtenerLicenciasPorEstado($estado){
+
+    }
 }
 
-?>

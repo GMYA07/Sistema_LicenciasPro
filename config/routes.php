@@ -13,7 +13,7 @@ $router->get('/equipos/area/create','EquiposController','mostrarCrearEquipo','au
 $router->post('/equipos/area/create','EquiposController','guardarEquipo','auth');
 $router->get('/equipos/area/edit','EquiposController','mostrarEditarEquipo','auth');
 $router->post('/equipos/area/edit','EquiposController','actualizarEquipo','auth');
-$router->get('/equipos/area/delete','EquiposController','eliminarEquipo','auth');
+$router->post('/equipos/area/delete','EquiposController','eliminarEquipo','auth');
 
 
 $router->get('/licencias','LicenciasController','index','auth');
