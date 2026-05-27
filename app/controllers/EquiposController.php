@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../models/AreasModel.php';
 require_once __DIR__ . '/../models/EquipoModel.php';
+require_once __DIR__ . '/../models/LicienciasModel.php';
 class EquiposController {
 
     public function index() {
@@ -31,6 +32,10 @@ class EquiposController {
         $modeloComputora = new EquipoModel();
 
         $computadoras = $modeloComputora->obtenerEquiposPorArea($idArea);
+
+        /*Traer las licencias no instaladas para poder instalar*/
+        $modeloLicencias = new LicenciasModel();
+        $licencias = $modeloLicencias->obtenerLicenciasPorEstado("NoInstalada");
 
         include '../app/views/equipos/equipos_area.php';
 
@@ -168,8 +173,8 @@ class EquiposController {
 
     public function eliminarEquipo(){
 
-        $idEquipo = $_GET['idEquipo'] ?? null;
-        $idArea = $_GET['idArea'] ?? null;
+        $idEquipo = $_POST['idComputadora'] ?? null;
+        $idArea = $_POST['idArea'] ?? null;
 
         if(!$idEquipo || !$idArea) {
             $_SESSION['mensaje_error'] = "El equipo no puedo ser eliminado por problemas con el id que esta vacio o el area.";
