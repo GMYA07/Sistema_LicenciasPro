@@ -63,6 +63,26 @@ class LicenciasModel {
         $resultado = $this->db->getConnection()->query($sql);
         return $resultado->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function obtenerLicenciasPorEstado($estado){
+
+        $stmt = $this->db->getConnection()->prepare("
+        SELECT
+             l.idLicencia,
+             t.nombreTipoLicencia,
+             l.codigoLicencia,
+             l.fechaAdquisision,
+             l.fechaCaducacion,
+             l.estadoLicencia 
+         FROM Licencias as l
+         INNER JOIN tipoLicencias as t ON t.idTipoLicencia = l.idTipoLicencia
+         WHERE l.estadoLicencia = :estado
+        ");
+
+        $stmt->execute(['estado' => $estado]);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
 }
 
-?>
