@@ -28,9 +28,18 @@
                     </label>
                     <div class="relative">
                         <select name="idLicencia" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:border-[#2CA1C8] focus:bg-white transition-all appearance-none">
-                            <option value="" disabled selected>Selecciona una licencia disponible...</option>
-                            <option value="1">Windows 11 Pro - W269N-WFGWX...</option>
-                            <option value="2">Office 2021 - N9J9Q-Q7MIG...</option>
+                            <?php if (!empty($licencias)): ?>
+                                <option value="" disabled selected>Selecciona una licencia disponible...</option>
+
+                                <?php foreach ($licencias as $licencia): ?>
+                                    <option value="<?= $licencia["idLicencia"] ?>">
+                                        <?= $licencia["nombreTipoLicencia"] ?> - <?= $licencia["codigoLicencia"] ?>
+                                    </option>
+                                <?php endforeach; ?>
+
+                            <?php else: ?>
+                                <option value="" disabled selected>No hay licencias disponibles para asignar</option>
+                            <?php endif; ?>
                         </select>
                         <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-gray-400">
                             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
