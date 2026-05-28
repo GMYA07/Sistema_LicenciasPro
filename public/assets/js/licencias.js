@@ -1,168 +1,168 @@
 
-    //     JAVASCRIPT CONTROL DE MODALES         
+//     JAVASCRIPT CONTROL DE MODALES         
 
-        // Funciones generales de apertura y cierre
-        function abrirModal(idModal) {
-            const modal = document.getElementById(idModal);
-            modal.classList.remove('hidden');
-            // Retraso milimétrico para simular la transición de opacidad suave
-            setTimeout(() => {
-                modal.classList.add('opacity-100');
-            }, 50);
+// Funciones generales de apertura y cierre
+function abrirModal(idModal) {
+    const modal = document.getElementById(idModal);
+    modal.classList.remove('hidden');
+    // Retraso milimétrico para simular la transición de opacidad suave
+    setTimeout(() => {
+        modal.classList.add('opacity-100');
+    }, 50);
+}
+
+function cerrarModal(idModal) {
+    const modal = document.getElementById(idModal);
+    modal.classList.add('hidden');
+}
+
+function normalizarTexto(valor) {
+    return (valor || '')
+        .toString()
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .trim();
+}
+
+function filtrarLicencias() {
+    const buscador = document.getElementById('buscarLicencia');
+    const filtroEstado = document.getElementById('filtro-estado');
+    const filas = document.querySelectorAll('tbody tr[data-search]');
+    const filaSinResultados = document.getElementById('sinResultadosLicencias');
+
+    const textoBusqueda = normalizarTexto(buscador ? buscador.value : '');
+    const estadoSeleccionado = normalizarTexto(filtroEstado ? filtroEstado.value : '');
+
+    let visibles = 0;
+
+    filas.forEach((fila) => {
+        const contenidoFila = normalizarTexto(fila.dataset.search);
+        const estadoFila = normalizarTexto(fila.dataset.estado);
+
+        const coincideTexto = textoBusqueda === '' || contenidoFila.includes(textoBusqueda);
+        const coincideEstado = estadoSeleccionado === '' || estadoFila === estadoSeleccionado;
+        const mostrar = coincideTexto && coincideEstado;
+
+        fila.classList.toggle('hidden', !mostrar);
+
+        if (mostrar) {
+            visibles += 1;
         }
+    });
 
-        function cerrarModal(idModal) {
-            const modal = document.getElementById(idModal);
-            modal.classList.add('hidden');
+    if (filaSinResultados) {
+        filaSinResultados.classList.toggle('hidden', visibles !== 0);
+    }
+}
+
+function aplicarBotonGuardar(btn, modoEdicion, textoDefault, textoEdicion, iconoEdicion) {
+    if (!btn) return;
+
+    btn.classList.remove('bg-[#2CA1C8]', 'hover:bg-[#1E85A8]', 'bg-[#D97706]', 'hover:bg-[#B45309]');
+    btn.classList.add('inline-flex', 'items-center', 'gap-2');
+
+    if (modoEdicion) {
+        btn.classList.add('bg-[#D97706]', 'hover:bg-[#B45309]');
+        btn.innerHTML = iconoEdicion || '';
+        btn.innerHTML += `<span>${textoEdicion || 'Actualizar'}</span>`;
+    } else {
+        btn.classList.add('bg-[#2CA1C8]', 'hover:bg-[#1E85A8]');
+        if (typeof textoDefault === 'string' && textoDefault.includes('<svg')) {
+            btn.innerHTML = textoDefault;
+        } else {
+            btn.innerText = textoDefault || btn.textContent.trim();
         }
+    }
 
-        function normalizarTexto(valor) {
-            return (valor || '')
-                .toString()
-                .toLowerCase()
-                .normalize('NFD')
-                .replace(/[\u0300-\u036f]/g, '')
-                .trim();
-        }
+    btn.style.color = '#FFFFFF';
+}
 
-        function filtrarLicencias() {
-            const buscador = document.getElementById('buscarLicencia');
-            const filtroEstado = document.getElementById('filtro-estado');
-            const filas = document.querySelectorAll('tbody tr[data-search]');
-            const filaSinResultados = document.getElementById('sinResultadosLicencias');
+// Lógica especial para alternar fluidamente entre Modales superpuestos
+function abrirSubModal() {
+    // Ocultamos el primer modal momentáneamente
+    document.getElementById('modalLicencia').classList.add('hidden');
+    // Mostramos el segundo modal
+    abrirModal('modalTipoLicencia');
+}
 
-            const textoBusqueda = normalizarTexto(buscador ? buscador.value : '');
-            const estadoSeleccionado = normalizarTexto(filtroEstado ? filtroEstado.value : '');
+function cerrarSubModal() {
+    // Ocultamos el modal secundario
+    document.getElementById('modalTipoLicencia').classList.add('hidden');
+    // Regresamos la vista al modal principal
+    document.getElementById('modalLicencia').classList.remove('hidden');
+}
 
-            let visibles = 0;
+// Cerrar modales haciendo clic fuera del recuadro blanco (en el fondo oscuro)
+window.onclick = function (event) {
+    const modal1 = document.getElementById('modalLicencia');
+    const modal2 = document.getElementById('modalTipoLicencia');
 
-            filas.forEach((fila) => {
-                const contenidoFila = normalizarTexto(fila.dataset.search);
-                const estadoFila = normalizarTexto(fila.dataset.estado);
+    if (event.target === modal1) {
+        cerrarModal('modalLicencia');
+    }
+    if (event.target === modal2) {
+        cerrarSubModal();
+    }
+}
 
-                const coincideTexto = textoBusqueda === '' || contenidoFila.includes(textoBusqueda);
-                const coincideEstado = estadoSeleccionado === '' || estadoFila === estadoSeleccionado;
-                const mostrar = coincideTexto && coincideEstado;
+const buscadorLicencias = document.getElementById('buscarLicencia');
+const filtroEstadoLicencias = document.getElementById('filtro-estado');
 
-                fila.classList.toggle('hidden', !mostrar);
+if (buscadorLicencias) {
+    buscadorLicencias.addEventListener('input', filtrarLicencias);
+}
 
-                if (mostrar) {
-                    visibles += 1;
-                }
-            });
+if (filtroEstadoLicencias) {
+    filtroEstadoLicencias.addEventListener('change', filtrarLicencias);
+}
 
-            if (filaSinResultados) {
-                filaSinResultados.classList.toggle('hidden', visibles !== 0);
-            }
-        }
+filtrarLicencias();
 
-        function aplicarBotonGuardar(btn, modoEdicion, textoDefault, textoEdicion, iconoEdicion) {
-            if (!btn) return;
+// agregar licencia 
 
-            btn.classList.remove('bg-[#2CA1C8]', 'hover:bg-[#1E85A8]', 'bg-[#D97706]', 'hover:bg-[#B45309]');
-            btn.classList.add('inline-flex', 'items-center', 'gap-2');
+// 1. Escuchamos el momento en que el usuario da clic en enviar
+document.getElementById('formNuevaLicencia').addEventListener('submit', function (event) {
+    // Evitamos que la página se recargue por defecto
+    event.preventDefault();
 
-            if (modoEdicion) {
-                btn.classList.add('bg-[#D97706]', 'hover:bg-[#B45309]');
-                btn.innerHTML = iconoEdicion || '';
-                btn.innerHTML += `<span>${textoEdicion || 'Actualizar'}</span>`;
-            } else {
-                btn.classList.add('bg-[#2CA1C8]', 'hover:bg-[#1E85A8]');
-                if (typeof textoDefault === 'string' && textoDefault.includes('<svg')) {
-                    btn.innerHTML = textoDefault;
-                } else {
-                    btn.innerText = textoDefault || btn.textContent.trim();
-                }
-            }
+    // 2. Capturamos AUTOMÁTICAMENTE todos los inputs usando FormData
+    const datosFormulario = new FormData(this);
 
-            btn.style.color = '#FFFFFF';
-        }
-
-        // Lógica especial para alternar fluidamente entre Modales superpuestos
-        function abrirSubModal() {
-            // Ocultamos el primer modal momentáneamente
-            document.getElementById('modalLicencia').classList.add('hidden');
-            // Mostramos el segundo modal
-            abrirModal('modalTipoLicencia');
-        }
-
-        function cerrarSubModal() {
-            // Ocultamos el modal secundario
-            document.getElementById('modalTipoLicencia').classList.add('hidden');
-            // Regresamos la vista al modal principal
-            document.getElementById('modalLicencia').classList.remove('hidden');
-        }
-
-        // Cerrar modales haciendo clic fuera del recuadro blanco (en el fondo oscuro)
-        window.onclick = function(event) {
-            const modal1 = document.getElementById('modalLicencia');
-            const modal2 = document.getElementById('modalTipoLicencia');
-            
-            if (event.target === modal1) {
-                cerrarModal('modalLicencia');
-            }
-            if (event.target === modal2) {
-                cerrarSubModal();
-            }
-        }
-
-        const buscadorLicencias = document.getElementById('buscarLicencia');
-        const filtroEstadoLicencias = document.getElementById('filtro-estado');
-
-        if (buscadorLicencias) {
-            buscadorLicencias.addEventListener('input', filtrarLicencias);
-        }
-
-        if (filtroEstadoLicencias) {
-            filtroEstadoLicencias.addEventListener('change', filtrarLicencias);
-        }
-
-        filtrarLicencias();
-
-        // agregar licencia
-
-        // 1. Escuchamos el momento en que el usuario da clic en enviar
-        document.getElementById('formNuevaLicencia').addEventListener('submit', function(event) {
-            // Evitamos que la página se recargue por defecto
-            event.preventDefault(); 
-
-            // 2. Capturamos AUTOMÁTICAMENTE todos los inputs usando FormData
-            const datosFormulario = new FormData(this);
-
-            // 3. Enviamos los datos al controlador mediante Fetch
-            fetch('/Sistema_LicenciasPro/public/licencias/guardar?ajax=1', {
-                method: 'POST',
-                body: datosFormulario // Aquí viajan tus variables de forma invisible
-            })
-                .then(respuesta => {
-                    if (!respuesta.ok) throw new Error('Error en el servidor');
-                    return respuesta.text();
-                })
-                .then(data => {
-                    // Solo confirmar éxito si el servidor responde OK
-                    alert("¡Licencia guardada con éxito!");
-                    cerrarModal('modalLicencia');
-                    window.location.reload(); 
-                })
-            .catch(error => {
-                console.error("Hubo un error al enviar:", error);
-            });
+    // 3. Enviamos los datos al controlador mediante Fetch
+    fetch('/Sistema_LicenciasPro/public/licencias/guardar?ajax=1', {
+        method: 'POST',
+        body: datosFormulario // Aquí viajan tus variables de forma invisible
+    })
+        .then(respuesta => {
+            if (!respuesta.ok) throw new Error('Error en el servidor');
+            return respuesta.text();
+        })
+        .then(data => {
+            // Solo confirmar éxito si el servidor responde OK
+            alert("¡Licencia guardada con éxito!");
+            cerrarModal('modalLicencia');
+            window.location.reload();
+        })
+        .catch(error => {
+            console.error("Hubo un error al enviar:", error);
         });
+});
 
 
 
 
 
 
-        
+
 // ==========================================
 // ESCUCHADOR DEL FORMULARIO ÚNICO (TIPO)
 // ==========================================
-document.getElementById('formNuevoTipo').addEventListener('submit', function(event) {
+document.getElementById('formNuevoTipo').addEventListener('submit', function (event) {
     event.preventDefault();
 
     const datosFormulario = new FormData(this);
-    
+
     // 1. Obtenemos el ID oculto limpiando espacios. 
     // Recuerda verificar que tu input oculto tenga id="idTipoLicencia"
     const idValue = document.getElementById('idTipoLicenciaTipo').value.trim();
@@ -176,19 +176,19 @@ document.getElementById('formNuevoTipo').addEventListener('submit', function(eve
         method: 'POST',
         body: datosFormulario
     })
-    .then(respuesta => {
-        if (!respuesta.ok) throw new Error('Error en el servidor');
-        return respuesta.text();
-    })
-    .then(data => {
-        // Alerta dinámica según la acción efectuada
-        alert(idValue === "" ? "¡Tipo de licencia guardado con éxito!" : "¡Tipo de licencia actualizado con éxito!");
-        cerrarSubModal();
-        window.location.reload(); 
-    })
-    .catch(error => {
-        console.error("Hubo un error al enviar:", error);
-    });
+        .then(respuesta => {
+            if (!respuesta.ok) throw new Error('Error en el servidor');
+            return respuesta.text();
+        })
+        .then(data => {
+            // Alerta dinámica según la acción efectuada
+            alert(idValue === "" ? "¡Tipo de licencia guardado con éxito!" : "¡Tipo de licencia actualizado con éxito!");
+            cerrarSubModal();
+            window.location.reload();
+        })
+        .catch(error => {
+            console.error("Hubo un error al enviar:", error);
+        });
 });
 
 // ==========================================
@@ -202,7 +202,7 @@ function editarTipo(id, nombre) {
     // 2. Cambiamos el texto del título (Label) a color ámbar/naranja
     const label = document.getElementById('labelFormTipo');
     label.innerText = 'EDITAR TIPO DE LICENCIA';
-    label.style.color = '#D97706'; 
+    label.style.color = '#D97706';
 
     // 3. Forzamos los colores correctos en el botón de Actualizar
     const btnSubmit = document.getElementById('btnSubmitTipo');
@@ -222,7 +222,7 @@ function limpiarFormularioTipo() {
 
     const label = document.getElementById('labelFormTipo');
     label.innerText = 'Nuevo Tipo de Licencia';
-    label.style.color = ''; 
+    label.style.color = '';
 
     const btnSubmit = document.getElementById('btnSubmitTipo');
     btnSubmit.innerText = 'Añadir';
@@ -242,24 +242,24 @@ function confirmEliminar(id) {
         method: 'POST',
         body: fd
     })
-    .then(res => {
-        if (!res.ok) throw new Error('Error al eliminar');
-        return res.text();
-    })
-    .then(data => {
-        // si el controlador devuelve OK, recargamos para actualizar la lista
-        if (data.trim() === 'OK' || data.includes('"result"')) {
-            alert('Tipo eliminado');
-            window.location.reload();
-        } else {
-            console.error('Respuesta inesperada:', data);
-            alert('No se pudo eliminar el tipo.');
-        }
-    })
-    .catch(err => {
-        console.error(err);
-        alert('Error al eliminar el tipo.');
-    });
+        .then(res => {
+            if (!res.ok) throw new Error('Error al eliminar');
+            return res.text();
+        })
+        .then(data => {
+            // si el controlador devuelve OK, recargamos para actualizar la lista
+            if (data.trim() === 'OK' || data.includes('"result"')) {
+                alert('Tipo eliminado');
+                window.location.reload();
+            } else {
+                console.error('Respuesta inesperada:', data);
+                alert('No se pudo eliminar el tipo.');
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert('Error al eliminar el tipo.');
+        });
 }
 
 // funcion para editar licencia (similar a editar tipo pero con más campos)
@@ -269,17 +269,29 @@ function prepararEdicion(boton) {
     const tipo = boton.dataset.tipo;
     const codigo = boton.dataset.codigo;
     const estado = boton.dataset.estado;
+    const fechaAdq = boton.dataset.fechaadq;
+    const fechaCad = boton.dataset.fechacad;
+
+
+
 
     // 2. Rellenamos los inputs de tu formulario único de licencias
     const idLicenciaInput = document.getElementById('idLicencia');
     const tipoLicenciaSelect = document.getElementById('idTipoLicencia');
     const codigoLicenciaInput = document.getElementById('codigoLicencia');
     const estadoLicenciaSelect = document.getElementById('estadoLicencia');
+    const fechaAdquisicionInput = document.getElementById('fechaAdquisision');
+    const fechaCaducacionInput = document.getElementById('fechaCaducacion');
 
     if (idLicenciaInput) idLicenciaInput.value = id;
     if (tipoLicenciaSelect) tipoLicenciaSelect.value = tipo;
     if (codigoLicenciaInput) codigoLicenciaInput.value = codigo;
-    
+    if (fechaAdquisicionInput && fechaAdq) {
+        fechaAdquisicionInput.value = fechaAdq.split(' ')[0];
+    }
+    if (fechaCaducacionInput && fechaCad) {
+        fechaCaducacionInput.value = fechaCad.split(' ')[0];
+    }
     if (estadoLicenciaSelect) {
         estadoLicenciaSelect.value = estado;
     }
@@ -331,7 +343,7 @@ async function cargarEstadisticas() {
         console.log('Datos recibidos:', datos);
 
         const counts = {
-            vigente: 0,
+            instalada: 0,
             disponible: 0,
             expirada: 0
         };
@@ -347,9 +359,9 @@ async function cargarEstadisticas() {
 
                 const cantidad = parseInt(row.cantidad, 10) || 0;
 
-                if (estado.includes('vigente')) {
+                if (estado.includes('instalada')) {
 
-                    counts.vigente += cantidad;
+                    counts.instalada += cantidad;
 
                 } else if (estado.includes('no instalada')) {
 
@@ -366,7 +378,7 @@ async function cargarEstadisticas() {
         }
 
         // Actualizar cards
-        if (vigElem) vigElem.textContent = counts.vigente;
+        if (vigElem) vigElem.textContent = counts.instalada;
         if (disElem) disElem.textContent = counts.disponible;
         if (expElem) expElem.textContent = counts.expirada;
 

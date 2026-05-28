@@ -38,7 +38,7 @@
         class="bg-white rounded-xl border border-gray-200 py-2.5 px-4 shadow-sm flex flex-col justify-between min-h-[90px]">
         <div class="flex items-center justify-between gap-2">
             <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider truncate">Licencias
-                Vigentes</span>
+                Instaladas</span>
             <span
                 class="text-[10px] px-2 py-0.5 rounded-md bg-green-50 text-green-700 font-bold whitespace-nowrap">Vigente</span>
         </div>
@@ -197,11 +197,26 @@
                             <p class="text-xs text-gray-400">Clave de producto</p>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <p class="text-sm text-gray-700">Sin asignar</p>
+                            <p class="text-sm text-gray-700">
+                                <?php if ($licencia['equipoAsignado'] === 1): ?>
+                                    <span class="text-green-600 font-semibold">Equipo asignado</span>
+                                <?php else: ?>
+                                    Equipo no asignado
+                                <?php endif; ?>
+                            </p>
                             <p class="text-xs text-gray-400">Disponible para instalación</p>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <p class="text-sm text-gray-700">N/A</p>
+                            <p class="text-sm text-gray-700">
+                                <?php
+                                if (!empty($licencia['fechaCaducacion']) && $licencia['fechaCaducacion'] !== '0000-00-00') {
+                                    $fecha = new DateTime($licencia['fechaCaducacion']);
+                                    echo $fecha->format('d M Y');
+                                } else {
+                                    echo 'Sin fecha de vencimiento';
+                                }
+                                ?>
+                            </p>
                             <p class="text-xs text-gray-400">Sin fecha de vencimiento</p>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
@@ -229,6 +244,8 @@
                                 data-tipo="<?php echo (int) $licencia['idTipoLicencia']; ?>"
                                 data-codigo="<?php echo htmlspecialchars($licencia['codigoLicencia'], ENT_QUOTES, 'UTF-8'); ?>"
                                 data-estado="<?php echo htmlspecialchars($licencia['estadoLicencia'], ENT_QUOTES, 'UTF-8'); ?>"
+                                data-fechaadq="<?php echo htmlspecialchars($licencia['fechaAdquisision'], ENT_QUOTES, 'UTF-8'); ?>"
+                                data-fechacad="<?php echo htmlspecialchars($licencia['fechaCaducacion'], ENT_QUOTES, 'UTF-8'); ?>"
                                 onclick="prepararEdicion(this)">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
                                     stroke="currentColor" stroke-width="2">
@@ -342,7 +359,7 @@
                     <select id="estadoLicencia" name="estadoLicencia" required
                         class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:border-[#2CA1C8] focus:bg-white transition-all appearance-none">
                         <option value="No instalada" selected>No instalada (Disponible)</option>
-                        <option value="Vigente">Vigente (Activa)</option>
+                        <option value="Instalada">Vigente (Activa)</option>
                         <option value="Expirada">Expirada</option>
                         <option value="No instalada">No instalada</option>
                     </select>
@@ -352,6 +369,31 @@
                         </svg>
                     </div>
                 </div>
+            </div>
+
+            <!-- Fechas -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                <!-- Fecha Adquisición -->
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                        Fecha de Adquisición
+                    </label>
+
+                    <input type="date" id="fechaAdquisision" name="fechaAdquisision" required
+                        class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:border-[#2CA1C8] focus:bg-white transition-all">
+                </div>
+
+                <!-- Fecha Caducación -->
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                        Fecha de Caducación
+                    </label>
+
+                    <input type="date" id="fechaCaducacion" name="fechaCaducacion" required
+                        class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:border-[#2CA1C8] focus:bg-white transition-all">
+                </div>
+
             </div>
 
             <!-- Botones Acciones -->

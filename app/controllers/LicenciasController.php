@@ -3,51 +3,78 @@
 require_once __DIR__ . '/../models/LicienciasModel.php';
 require_once __DIR__ . '/../models/TipoLicenciasModel.php';
 
-class LicenciasController {
+class LicenciasController
+{
     private $licenciasModel;
     private $tipoLicenciasModel;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->licenciasModel = new LicenciasModel();
         $this->tipoLicenciasModel = new TipoLicenciasModel();
     }
 
     // 1. MUESTRA LA PÁGINA PRINCIPAL
-    public function index() {
+    public function index()
+    {
         $licencias = $this->licenciasModel->getAll();
         $tipodeLicencias = $this->tipoLicenciasModel->getAllTipoLicencias();
-        
+
         include '../app/views/licencias/licencias.php';
     }
 
-    // 2. RECIBE LOS DATOS DEL FORMULARIO DE LICENCIA (MODAL 1)
-    public function guardar() {
+    public function guardar()
+    {
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // Recogemos los datos que vienen del formulario (los name="" de los inputs)
+
             $idTipoLicencia = $_POST['idTipoLicencia'] ?? null;
             $codigoLicencia = $_POST['codigoLicencia'] ?? null;
-            $estadoLicencia = $_POST['estadoLicencia'] ?? 'No instalada';
-
+            $estadoLicencia = $_POST['estadoLicencia'] ?? 'NoInstalada';
+            $fechaAdquisision = $_POST['fechaAdquisision'] ?? null;
+            $fechaCaducacion = $_POST['fechaCaducacion'] ?? null;
             $idLicencia = $_POST['idLicencia'] ?? null;
-            // Si llega un ID, actualizamos; si no, creamos una nueva licencia.
+
+            // ACTUALIZAR
             if (!empty($idLicencia) && is_numeric($idLicencia)) {
-                $resultado = $this->licenciasModel->actualizarLicencia($idLicencia, $idTipoLicencia, $codigoLicencia, $estadoLicencia);
-            } else {
-                $resultado = $this->licenciasModel->guardarLicencia($idTipoLicencia, $codigoLicencia, $estadoLicencia);
+
+                $resultado = $this->licenciasModel->actualizarLicencia(
+                    $idLicencia,
+                    $idTipoLicencia,
+                    $codigoLicencia,
+                    $fechaAdquisision,
+                    $fechaCaducacion,
+                    $estadoLicencia
+                );
+
+            }
+            // CREAR
+            else {
+
+                $resultado = $this->licenciasModel->guardarLicencia(
+                    $idTipoLicencia,
+                    $codigoLicencia,
+                    $fechaAdquisision,
+                    $fechaCaducacion,
+                    $estadoLicencia
+                );
             }
 
             if ($resultado) {
-                // Si se guardó con éxito, redireccionamos a la página principal para ver los cambios
-                header('Location: ' . BASE_URL . '/licencias'); 
+
+                header('Location: ' . BASE_URL . '/licencias');
                 exit;
+
             } else {
+
                 echo "Error al guardar la licencia.";
+
             }
         }
     }
-
     // 3. RECIBE LOS DATOS DEL MINI-FORMULARIO DE TIPOS (MODAL 2)
-    public function guardarTipo() {
+    public function guardarTipo()
+    {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $nombre = $_POST['nombreTipoLicencia'] ?? null;
             $id = $_POST['idTipoLicencia'] ?? null;
@@ -81,7 +108,8 @@ class LicenciasController {
         }
     }
 
-    public function eliminarTipo() {
+    public function eliminarTipo()
+    {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $id = $_POST['idTipoLicencia'] ?? null;
 
@@ -97,11 +125,12 @@ class LicenciasController {
     }
 
     // Resivie datos para la carta de estadisticas de la vista de licencias
-    public function obtenerEstadisticas() {
+    public function obtenerEstadisticas()
+    {
         $estadisticas = $this->licenciasModel->contarLicenciasPorEstado();
         header('Content-Type: application/json');
         echo json_encode($estadisticas);
         exit;
     }
-    
+
 }
