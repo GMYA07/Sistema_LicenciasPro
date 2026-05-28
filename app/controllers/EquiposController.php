@@ -195,5 +195,52 @@ class EquiposController {
 
     }
 
+    public function asignarEquipo(){
+        //Recepcion de los datos
+        $idEquipo = trim($_POST['idComputadora'] ?? '');
+        $idArea = trim($_POST['idArea'] ?? '');
+        $idLicencia = trim($_POST['idLicencia'] ?? '');
+
+        //creacion de los modelos
+        $modeloLicencia = new LicenciasModel();
+        $modeloEquipo = new EquipoModel();
+
+        //vericamos que la licencia exista
+        if(!$modeloLicencia->obtenerLicenciasPorId($idLicencia)){
+            $_SESSION['mensaje_error'] = "Error al asignar licencia, La licencia no se encuentra registrada.";
+            header('Location: ' . BASE_URL . '/equipos/area?idArea=' . $idArea);
+            exit;
+        }
+
+        if(!$modeloEquipo->obtenerEquipoById($idEquipo)){
+            $_SESSION['mensaje_error'] = "Error al asignar licencia, el equipo no se encuentra registrada.";
+            header('Location: ' . BASE_URL . '/equipos/area?idArea=' . $idArea);
+            exit;
+        }
+
+        //Asignaremos la licencia al equipo
+        $data = [
+            'idEquipo' => $idEquipo,
+            'idLicencia' => $idLicencia
+        ];
+
+        //Proceso de asignacion de licencia
+        $exitoVinculo = $modeloLicencia->asignarLicenciaEquipo($data);
+
+        if(!$exitoVinculo){
+            $_SESSION['mensaje_error'] = "Error al asignar licencia, No se pudo asignar la licencia a el equipo.";
+            header('Location: ' . BASE_URL . '/equipos/area?idArea=' . $idArea);
+            exit;
+        }
+        
+        //Si se pasaron todas las validaciones pues se asigno esa licencia a ese equipo
+
+        $_SESSION['mensaje_exito'] = "¡La licencia se asigno correctamente!";
+        header('Location: ' . BASE_URL . '/equipos/area?idArea=' . $idArea);
+        exit;
+
+
+    }
+
 
 }

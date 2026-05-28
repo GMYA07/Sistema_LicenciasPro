@@ -19,8 +19,9 @@
         </div>
 
         <div class="p-6 bg-white border-b border-gray-100 shadow-sm z-10 relative">
-            <form id="formVincularLicencia" class="flex flex-col sm:flex-row items-end gap-3">
+            <form id="formVincularLicencia" action="<?= BASE_URL ?>/equipos/area/asignar" method="post" class="flex flex-col sm:flex-row items-end gap-3">
                 <input type="hidden" name="idComputadora" id="inputAsignarIdPC" value="">
+                <input type="hidden" name="idArea" value="<?= $infoArea['idArea'] ?>">
 
                 <div class="flex-1 w-full">
                     <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">

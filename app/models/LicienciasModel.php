@@ -84,5 +84,34 @@ class LicenciasModel {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function obtenerLicenciasPorId($id){
+
+        $stmt = $this->db->getConnection()->prepare("
+        SELECT
+             l.idLicencia,
+             t.nombreTipoLicencia,
+             l.codigoLicencia,
+             l.fechaAdquisision,
+             l.fechaCaducacion,
+             l.estadoLicencia 
+         FROM Licencias as l
+         INNER JOIN tipoLicencias as t ON t.idTipoLicencia = l.idTipoLicencia
+         WHERE l.idLicencia = :idLicencia
+        ");
+
+        $stmt->execute(['idLicencia' => $id]);
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+
+    }
+
+    public function asignarLicenciaEquipo($data){
+        $stmt = $this->db->getConnection()->prepare("INSERT INTO licencias_detalles (id_computadora, id_licencia) VALUES (:idComputadora, :idLicencia)");
+        $stmt->bindParam(':idComputadora', $data['idEquipo']);
+        $stmt->bindParam(':idLicencia', $data['idLicencia']);
+
+        return $stmt->execute();
+    }
+
 }
 
