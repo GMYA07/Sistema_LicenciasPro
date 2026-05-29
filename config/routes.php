@@ -14,7 +14,9 @@ $router->post('/equipos/area/create','EquiposController','guardarEquipo','auth')
 $router->get('/equipos/area/edit','EquiposController','mostrarEditarEquipo','auth');
 $router->post('/equipos/area/edit','EquiposController','actualizarEquipo','auth');
 $router->post('/equipos/area/delete','EquiposController','eliminarEquipo','auth');
-$router->post('/equipos/area/asignar','EquiposController','asignarEquipo','auth');
+$router->post('/equipos/area/asignar','EquiposController','asignarLicencia','auth');
+$router->post('/equipos/area/desvincular_licencia','EquiposController','desvincularLicencia','auth');
+$router->get('/equipos/area/obtener_licencias','EquiposController','obtenerLicenciasVinculadas','auth');
 
 // Rutas para licencias
 $router->get('/licencias','LicenciasController','index','auth');

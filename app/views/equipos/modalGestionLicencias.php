@@ -87,4 +87,8 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    const BASE_URL_JS = '<?= BASE_URL ?>'; // O BASE_URL, la que tengas definida
+</script>
 <script src="<?=BASE_URL?>/assets/js/equipos.js"></script>

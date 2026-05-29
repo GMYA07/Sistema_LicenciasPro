@@ -195,7 +195,27 @@ class EquiposController {
 
     }
 
-    public function asignarEquipo(){
+    //FUNCIONES PARA EL TEMA DE VINCULO Y DESVINCULO DE LICENCIA
+    public function obtenerLicenciasVinculadas(){
+        $idComputadora = $_GET['idComputadora'] ?? null;
+
+        if (!$idComputadora) {
+            // Si no hay ID, devolvemos un arreglo vacío
+            header('Content-Type: application/json');
+            echo json_encode([]);
+            exit;
+        }
+        //Instancaimos el modelo
+        $modeloLicencias = new LicenciasModel();
+
+        $licencias = $modeloLicencias->obtenerLicenciasEquipoVinculado($idComputadora);
+        header('Content-Type: application/json'); //Le decimos al navegador "Ojo, lo que te voy a mandar no es HTML, es un JSON"
+        echo json_encode($licencias);
+        exit; //con esto evitamos q quiera rendrizar algo mas
+
+    }
+
+    public function asignarLicencia(){
         //Recepcion de los datos
         $idEquipo = trim($_POST['idComputadora'] ?? '');
         $idArea = trim($_POST['idArea'] ?? '');
@@ -240,6 +260,43 @@ class EquiposController {
         exit;
 
 
+    }
+
+    public function desvincularLicencia(){
+        //Recibimos los datos del form falso
+        $idLicencia = $_POST['idLicencia'] ?? null;
+        $idComputadora = $_POST['idComputadora'] ?? null;
+
+        if (!$idLicencia || !$idComputadora) {
+            header('Content-Type: application/json');
+            echo json_encode(['status' => 'error', 'message' => 'Faltan datos obligatorios']);
+            exit;
+        }
+
+        $data = [
+            'idLicencia' => $idLicencia,
+            'idComputadora' => $idComputadora
+        ];
+        //instancio el modelo
+        $modeloLicencia = new LicenciasModel();
+        $exito = $modeloLicencia->eliminarRelacionLicenciaEquipo($data);
+
+        header('Content-Type: application/json');
+
+        if ($exito) {
+            // Respondemos un arreglo que JS pueda leer fácilmente
+            echo json_encode([
+                'status' => 'success',
+                'message' => 'La licencia se retiró del equipo correctamente.'
+            ]);
+        } else {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'No se pudo eliminar la licencia de la base de datos.'
+            ]);
+        }
+
+        exit; //ayuda a no mandar html y solo json
     }
 
 

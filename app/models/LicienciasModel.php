@@ -113,5 +113,38 @@ class LicenciasModel {
         return $stmt->execute();
     }
 
+    public function obtenerLicenciasEquipoVinculado($idEquipo){
+
+        $stmt = $this->db->getConnection()->prepare("
+        SELECT
+             l.idLicencia,
+             t.nombreTipoLicencia,
+             l.codigoLicencia,
+             l.fechaAdquisision,
+             l.fechaCaducacion,
+             l.estadoLicencia 
+         FROM Licencias as l
+         INNER JOIN tipoLicencias as t ON t.idTipoLicencia = l.idTipoLicencia
+         INNER JOIN licencias_detalles as ld ON  ld.id_licencia = l.idLicencia
+         WHERE ld.id_computadora = :idComputadora
+        ");
+
+        $stmt->execute(['idComputadora' => $idEquipo]);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function eliminarRelacionLicenciaEquipo($data){
+        try {
+            $stmt = $this->db->getConnection()->prepare("DELETE FROM licencias_detalles WHERE id_computadora = :idComputadora AND id_licencia = :idLicencia");
+            $stmt->bindParam(':idComputadora', $data['idComputadora']);
+            $stmt->bindParam(':idLicencia', $data['idLicencia']);
+            return $stmt->execute();
+        }catch (exception $e){
+            echo $e->getMessage();
+            return false;
+        }
+    }
+
 }
 

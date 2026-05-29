@@ -60,6 +60,15 @@
                         <option value="HP" <?= ($computadora['Marca'] == 'HP') ? 'selected' : '' ?>>
                             HP
                         </option>
+                        <option value="ASUS" <?= ($computadora['Marca'] == 'ASUS') ? 'selected' : '' ?>>
+                            ASUS
+                        </option>
+                        <option value="Acer" <?= ($computadora['Marca'] == 'Acer') ? 'selected' : '' ?>>
+                            Acer
+                        </option>
+                        <option value="Fujitsu" <?= ($computadora['Marca'] == 'Fujitsu') ? 'selected' : '' ?>>
+                            Fujitsu
+                        </option>
                     </select>
                     <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-gray-400">
                         <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
