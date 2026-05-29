@@ -176,6 +176,69 @@ public function actualizarLicencia($idLicencia, array $data)
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function obtenerLicenciasPorId($id){
+
+        $stmt = $this->db->getConnection()->prepare("
+        SELECT
+             l.idLicencia,
+             t.nombreTipoLicencia,
+             l.codigoLicencia,
+             l.fechaAdquisision,
+             l.fechaCaducacion,
+             l.estadoLicencia 
+         FROM Licencias as l
+         INNER JOIN tipoLicencias as t ON t.idTipoLicencia = l.idTipoLicencia
+         WHERE l.idLicencia = :idLicencia
+        ");
+
+        $stmt->execute(['idLicencia' => $id]);
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+
+    }
+
+    public function asignarLicenciaEquipo($data){
+        $stmt = $this->db->getConnection()->prepare("INSERT INTO licencias_detalles (id_computadora, id_licencia) VALUES (:idComputadora, :idLicencia)");
+        $stmt->bindParam(':idComputadora', $data['idEquipo']);
+        $stmt->bindParam(':idLicencia', $data['idLicencia']);
+
+        return $stmt->execute();
+    }
+
+    public function obtenerLicenciasEquipoVinculado($idEquipo){
+
+        $stmt = $this->db->getConnection()->prepare("
+        SELECT
+             l.idLicencia,
+             t.nombreTipoLicencia,
+             l.codigoLicencia,
+             l.fechaAdquisision,
+             l.fechaCaducacion,
+             l.estadoLicencia 
+         FROM Licencias as l
+         INNER JOIN tipoLicencias as t ON t.idTipoLicencia = l.idTipoLicencia
+         INNER JOIN licencias_detalles as ld ON  ld.id_licencia = l.idLicencia
+         WHERE ld.id_computadora = :idComputadora
+        ");
+
+        $stmt->execute(['idComputadora' => $idEquipo]);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function eliminarRelacionLicenciaEquipo($data){
+        try {
+            $stmt = $this->db->getConnection()->prepare("DELETE FROM licencias_detalles WHERE id_computadora = :idComputadora AND id_licencia = :idLicencia");
+            $stmt->bindParam(':idComputadora', $data['idComputadora']);
+            $stmt->bindParam(':idLicencia', $data['idLicencia']);
+            return $stmt->execute();
+        }catch (exception $e){
+            echo $e->getMessage();
+            return false;
+        }
+    }
+
+}
     //funcoin para traer los enum 
     public function obtenerEstadosLicencia()
     {

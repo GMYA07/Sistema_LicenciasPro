@@ -195,5 +195,109 @@ class EquiposController {
 
     }
 
+    //FUNCIONES PARA EL TEMA DE VINCULO Y DESVINCULO DE LICENCIA
+    public function obtenerLicenciasVinculadas(){
+        $idComputadora = $_GET['idComputadora'] ?? null;
+
+        if (!$idComputadora) {
+            // Si no hay ID, devolvemos un arreglo vacío
+            header('Content-Type: application/json');
+            echo json_encode([]);
+            exit;
+        }
+        //Instancaimos el modelo
+        $modeloLicencias = new LicenciasModel();
+
+        $licencias = $modeloLicencias->obtenerLicenciasEquipoVinculado($idComputadora);
+        header('Content-Type: application/json'); //Le decimos al navegador "Ojo, lo que te voy a mandar no es HTML, es un JSON"
+        echo json_encode($licencias);
+        exit; //con esto evitamos q quiera rendrizar algo mas
+
+    }
+
+    public function asignarLicencia(){
+        //Recepcion de los datos
+        $idEquipo = trim($_POST['idComputadora'] ?? '');
+        $idArea = trim($_POST['idArea'] ?? '');
+        $idLicencia = trim($_POST['idLicencia'] ?? '');
+
+        //creacion de los modelos
+        $modeloLicencia = new LicenciasModel();
+        $modeloEquipo = new EquipoModel();
+
+        //vericamos que la licencia exista
+        if(!$modeloLicencia->obtenerLicenciasPorId($idLicencia)){
+            $_SESSION['mensaje_error'] = "Error al asignar licencia, La licencia no se encuentra registrada.";
+            header('Location: ' . BASE_URL . '/equipos/area?idArea=' . $idArea);
+            exit;
+        }
+
+        if(!$modeloEquipo->obtenerEquipoById($idEquipo)){
+            $_SESSION['mensaje_error'] = "Error al asignar licencia, el equipo no se encuentra registrada.";
+            header('Location: ' . BASE_URL . '/equipos/area?idArea=' . $idArea);
+            exit;
+        }
+
+        //Asignaremos la licencia al equipo
+        $data = [
+            'idEquipo' => $idEquipo,
+            'idLicencia' => $idLicencia
+        ];
+
+        //Proceso de asignacion de licencia
+        $exitoVinculo = $modeloLicencia->asignarLicenciaEquipo($data);
+
+        if(!$exitoVinculo){
+            $_SESSION['mensaje_error'] = "Error al asignar licencia, No se pudo asignar la licencia a el equipo.";
+            header('Location: ' . BASE_URL . '/equipos/area?idArea=' . $idArea);
+            exit;
+        }
+        
+        //Si se pasaron todas las validaciones pues se asigno esa licencia a ese equipo
+
+        $_SESSION['mensaje_exito'] = "¡La licencia se asigno correctamente!";
+        header('Location: ' . BASE_URL . '/equipos/area?idArea=' . $idArea);
+        exit;
+
+
+    }
+
+    public function desvincularLicencia(){
+        //Recibimos los datos del form falso
+        $idLicencia = $_POST['idLicencia'] ?? null;
+        $idComputadora = $_POST['idComputadora'] ?? null;
+
+        if (!$idLicencia || !$idComputadora) {
+            header('Content-Type: application/json');
+            echo json_encode(['status' => 'error', 'message' => 'Faltan datos obligatorios']);
+            exit;
+        }
+
+        $data = [
+            'idLicencia' => $idLicencia,
+            'idComputadora' => $idComputadora
+        ];
+        //instancio el modelo
+        $modeloLicencia = new LicenciasModel();
+        $exito = $modeloLicencia->eliminarRelacionLicenciaEquipo($data);
+
+        header('Content-Type: application/json');
+
+        if ($exito) {
+            // Respondemos un arreglo que JS pueda leer fácilmente
+            echo json_encode([
+                'status' => 'success',
+                'message' => 'La licencia se retiró del equipo correctamente.'
+            ]);
+        } else {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'No se pudo eliminar la licencia de la base de datos.'
+            ]);
+        }
+
+        exit; //ayuda a no mandar html y solo json
+    }
+
 
 }
