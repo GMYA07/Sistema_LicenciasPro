@@ -18,7 +18,7 @@
 
     <div class="flex flex-wrap items-center gap-3">
         <!-- BOTÓN MODIFICADO PARA ABRIR EL MODAL PRINCIPAL -->
-        <button onclick="abrirModal('modalLicencia')"
+        <button onclick="abrirModal('modalLicencia', true)"
             class="flex items-center gap-2 bg-[#2CA1C8] hover:bg-[#1E85A8] text-white px-5 py-2.5 rounded-xl font-semibold text-sm shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor" stroke-width="2">
@@ -33,12 +33,12 @@
 
 <!-- CARDS ESTADÍSTICAS -->
 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-    <!-- Card Vigentes -->
+    <!-- Card Instaladas -->
     <div
         class="bg-white rounded-xl border border-gray-200 py-2.5 px-4 shadow-sm flex flex-col justify-between min-h-[90px]">
         <div class="flex items-center justify-between gap-2">
             <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider truncate">Licencias
-                Vigentes</span>
+                Instaladas</span>
             <span
                 class="text-[10px] px-2 py-0.5 rounded-md bg-green-50 text-green-700 font-bold whitespace-nowrap">Vigente</span>
         </div>
@@ -132,8 +132,8 @@
                             class="bg-transparent text-sm text-gray-700 focus:outline-none cursor-pointer">
 
                             <option value="">Todos</option>
-                            <option value="Vigente">Vigente</option>
-                            <option value="No Instalada">No Instalada</option>
+                            <option value="Instalada">Instalada </option>
+                            <option value="noinstalada">No Instalada</option>
                             <option value="Expirada">Expirada</option>
 
                         </select>
@@ -153,75 +153,176 @@
 </div>
 
 
-
-<div class="overflow-x-auto">
-    <table class="min-w-full divide-y divide-gray-200 align-middle">
+<div class="overflow-x-hidden">
+    <table class="w-full table-fixed divide-y divide-gray-200 align-middle">
         <thead>
             <tr class="bg-gray-50">
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Software /
-                    Tipo</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Código de
-                    Licencia</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Equipo
-                    Asignado</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Vencimiento
+                <th class="px-3 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                    Software / Tipo
                 </th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Estado</th>
-                <th class="px-6 py-3 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">Acciones
+
+                <th class="px-3 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                    Código de Licencia
+                </th>
+
+                <th class="px-3 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                    Equipo Asignado
+                </th>
+
+                <th class="px-3 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                    Vencimiento
+                </th>
+
+                <th class="px-3 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                    Estado
+                </th>
+
+                <th class="px-3 py-3 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">
+                    Acciones
                 </th>
             </tr>
         </thead>
+
         <tbody class="bg-white divide-y divide-gray-100">
+
             <?php if (!empty($licencias)): ?>
+
                 <?php foreach ($licencias as $licencia): ?>
+
                     <tr data-search="<?php echo htmlspecialchars(strtolower($licencia['nombreTipoLicencia'] . ' ' . $licencia['codigoLicencia'] . ' ' . $licencia['estadoLicencia']), ENT_QUOTES, 'UTF-8'); ?>"
                         data-estado="<?php echo htmlspecialchars(strtolower($licencia['estadoLicencia']), ENT_QUOTES, 'UTF-8'); ?>">
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="flex items    -center gap-3">
+
+                        <!-- SOFTWARE -->
+                        <td class="px-3 py-3 whitespace-nowrap">
+                            <div class="flex items-center gap-2">
+
                                 <div
-                                    class="flex-shrink-0 h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 font-bold">
+                                    class="flex-shrink-0 h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 font-bold text-xs">
+
                                     <?php echo strtoupper(substr($licencia['nombreTipoLicencia'], 0, 2)); ?>
+
                                 </div>
+
                                 <div>
                                     <p class="text-sm font-semibold text-gray-800">
                                         <?php echo htmlspecialchars($licencia['nombreTipoLicencia']); ?>
                                     </p>
-                                    <p class="text-xs text-gray-400">Categoría de software</p>
+
+                                    <p class="text-xs text-gray-400">
+                                        Categoría de software
+                                    </p>
                                 </div>
+
                             </div>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <p class="text-sm font-mono text-gray-700">
+
+                        <!-- CÓDIGO -->
+                        <td class="px-3 py-3 whitespace-nowrap">
+
+                            <p
+                                class="inline-flex items-center px-2 py-1 rounded-xl bg-gray-100 border border-gray-200 text-xs text-gray-700 font-mono">
+
                                 <?php echo htmlspecialchars($licencia['codigoLicencia']); ?>
+
                             </p>
-                            <p class="text-xs text-gray-400">Clave de producto</p>
+
+                            <p class="text-xs text-gray-400">
+                                Clave de producto
+                            </p>
+
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <p class="text-sm text-gray-700">Sin asignar</p>
-                            <p class="text-xs text-gray-400">Disponible para instalación</p>
+
+                        <!-- EQUIPO -->
+                        <td class="px-3 py-3 whitespace-nowrap">
+
+                            <p class="text-sm text-gray-700">
+
+                                <?php if ($licencia['equipoAsignado'] === 1): ?>
+
+                                    <span class="text-green-600 font-semibold">
+                                        Equipo asignado a
+                                        <?php echo htmlspecialchars($licencia['modelo'] ?? 'N/A'); ?>
+                                    </span>
+
+                                <?php else: ?>
+
+                                    <span class="text-red-600 font-semibold">
+                                        Equipo no asignado
+                                    </span>
+
+                                <?php endif; ?>
+
+                            </p>
+
+                            <p class="text-xs text-gray-400">
+                                Disponible para instalación
+                            </p>
+
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <p class="text-sm text-gray-700">N/A</p>
-                            <p class="text-xs text-gray-400">Sin fecha de vencimiento</p>
+
+                        <!-- FECHA -->
+                        <td class="px-3 py-3 whitespace-nowrap">
+
+                            <p class="text-sm text-gray-700">
+
+                                <?php
+                                if (!empty($licencia['fechaCaducacion']) && $licencia['fechaCaducacion'] !== '0000-00-00') {
+
+                                    $fecha = new DateTime($licencia['fechaCaducacion']);
+                                    echo $fecha->format('d M Y');
+
+                                } else {
+
+                                    echo 'Sin fecha de vencimiento';
+                                }
+                                ?>
+
+                            </p>
+
+                            <p class="text-xs text-gray-400">
+                                Fecha de vencimiento
+                            </p>
+
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
+
+                        <!-- ESTADO -->
+                        <td class="px-3 py-3 whitespace-nowrap">
+
                             <?php
+
                             $estado = $licencia['estadoLicencia'];
+
+                            $estadoMostrar = str_replace('NoInstalada', 'No instalada', $estado);
+
                             $color = 'gray';
-                            if ($estado === 'Vigente') {
+
+                            if ($estado === 'Instalada') {
+
                                 $color = 'green';
+
                             } elseif ($estado === 'Expirada') {
+
                                 $color = 'red';
-                            } elseif ($estado === 'No instalada') {
+
+                            } elseif ($estado === 'NoInstalada') {
+
                                 $color = 'blue';
                             }
+
                             ?>
+
                             <span
                                 class="text-[10px] px-2 py-0.5 rounded-md bg-<?php echo $color; ?>-50 text-<?php echo $color; ?>-700 font-bold whitespace-nowrap">
-                                <?php echo htmlspecialchars($estado); ?>
+
+                                <?php echo htmlspecialchars($estadoMostrar); ?>
+
                             </span>
+
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-center">
+
+                        <!-- ACCIONES -->
+                        <td class="px-3 py-3 whitespace-nowrap text-center">
+
                             <button type="button"
                                 class="inline-flex items-center justify-center p-2 rounded-lg bg-cyan-50 text-[#2CA1C8] hover:bg-cyan-100 transition-all"
                                 title="Editar licencia" aria-label="Editar licencia"
@@ -229,32 +330,49 @@
                                 data-tipo="<?php echo (int) $licencia['idTipoLicencia']; ?>"
                                 data-codigo="<?php echo htmlspecialchars($licencia['codigoLicencia'], ENT_QUOTES, 'UTF-8'); ?>"
                                 data-estado="<?php echo htmlspecialchars($licencia['estadoLicencia'], ENT_QUOTES, 'UTF-8'); ?>"
+                                data-fechaadq="<?php echo htmlspecialchars($licencia['fechaAdquisision'], ENT_QUOTES, 'UTF-8'); ?>"
+                                data-fechacad="<?php echo htmlspecialchars($licencia['fechaCaducacion'], ENT_QUOTES, 'UTF-8'); ?>"
                                 onclick="prepararEdicion(this)">
+
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
                                     stroke="currentColor" stroke-width="2">
+
                                     <path stroke-linecap="round" stroke-linejoin="round"
                                         d="M16.862 4.487a2.75 2.75 0 113.889 3.89L8.25 20.878 3 22l1.122-5.25L16.862 4.487z" />
+
                                 </svg>
+
                             </button>
+
                         </td>
+
                     </tr>
+
                 <?php endforeach; ?>
+
                 <tr id="sinResultadosLicencias" class="hidden">
-                    <td colspan="7" class="px-6 py-6 text-center text-sm text-gray-400">
+
+                    <td colspan="7" class="px-3 py-6 text-center text-sm text-gray-400">
                         No se encontraron licencias con esos criterios.
                     </td>
+
                 </tr>
+
             <?php else: ?>
+
                 <tr>
-                    <td colspan="7" class="px-6 py-4 text-center text-xs text-gray-400">
+
+                    <td colspan="7" class="px-3 py-4 text-center text-xs text-gray-400">
                         No hay licencias registradas. ¡Agrega tu primera licencia!
                     </td>
+
                 </tr>
+
             <?php endif; ?>
+
         </tbody>
     </table>
 </div>
-
 </div>
 
 </div>
@@ -270,12 +388,11 @@
         <!-- Header Modal -->
         <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-white">
             <div>
-                <h3 class="text-lg font-bold text-[#0C3B4C]">Registrar Nueva Licencia</h3>
-                <p class="text-xs text-gray-400">Llena los datos para añadir un software al inventario</p>
+                <h3 id="encabesadoModal" name="encabesadoModal" class=" text-lg font-bold text-[#0C3B4C]">Registrar Nueva Licencia</h3>
+                <p id="suptituloEcabesadoModal" class="text-xs text-gray-400">Llena los datos para añadir un software al inventario</p>
             </div>
             <button onclick="cerrarModal('modalLicencia')"
                 class="text-gray-400 hover:text-gray-600 p-1.5 hover:bg-gray-100 rounded-xl transition-all">
-                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
             </button>
@@ -341,10 +458,9 @@
                 <div class="relative">
                     <select id="estadoLicencia" name="estadoLicencia" required
                         class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:border-[#2CA1C8] focus:bg-white transition-all appearance-none">
-                        <option value="No instalada" selected>No instalada (Disponible)</option>
-                        <option value="Vigente">Vigente (Activa)</option>
+                        <option value="Instalada" selected>Activa</option>
                         <option value="Expirada">Expirada</option>
-                        <option value="No instalada">No instalada</option>
+                        <option value="NoInstalada">No instalada</option>
                     </select>
                     <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-gray-400">
                         <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -354,9 +470,34 @@
                 </div>
             </div>
 
+            <!-- Fechas -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                <!-- Fecha Adquisición -->
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                        Fecha de Adquisición
+                    </label>
+
+                    <input type="date" id="fechaAdquisision" name="fechaAdquisision" required
+                        class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:border-[#2CA1C8] focus:bg-white transition-all">
+                </div>
+
+                <!-- Fecha Caducación -->
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                        Fecha de Caducación
+                    </label>
+
+                    <input type="date" id="fechaCaducacion" name="fechaCaducacion" required
+                        class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:border-[#2CA1C8] focus:bg-white transition-all">
+                </div>
+
+            </div>
+
             <!-- Botones Acciones -->
             <div class="flex items-center justify-end gap-3 mt-4 pt-4 border-t border-gray-100">
-                <button type="button" onclick="cerrarModal('    ')"
+                <button type="button" onclick="cerrarModal('modalLicencia')"
                     class="px-4 py-2.5 text-sm font-semibold text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-xl transition-all cursor-pointer">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block mr-2" fill="none"
                         viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
