@@ -36,7 +36,8 @@ class AuthController {
             }
         }else{
             //No se pudo iniciar sesion
-            echo "Usuario o contraseña incorrectos";
+            header('Location: ' . BASE_URL . '/');
+            exit;
         }
 
 
