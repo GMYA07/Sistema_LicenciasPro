@@ -11,13 +11,8 @@ class LicenciasModel
         $this->db = new Database();
     }
 
-    public function guardarLicencia(
-        $idTipoLicencia,
-        $codigoLicencia,
-        $fechaAdquisision,
-        $fechaCaducacion,
-        $estadoLicencia
-    ) {
+    public function guardarLicencia($data)
+    {
 
         $stmt = $this->db->getConnection()->prepare("
         INSERT INTO licencias 
@@ -38,28 +33,46 @@ class LicenciasModel
         )
     ");
 
+        if ($this->existeCodigoLicencia($data['codigoLicencia'], null)) {
+            throw new Exception("El código de licencia ya existe para otra licencia.");
+        }
+
         $stmt->execute([
-            'idTipoLicencia' => $idTipoLicencia,
-            'codigoLicencia' => $codigoLicencia,
-            'fechaAdquisision' => $fechaAdquisision,
-            'fechaCaducacion' => $fechaCaducacion,
-            'estadoLicencia' => $estadoLicencia
+            'idTipoLicencia' => $data['idTipoLicencia'],
+            'codigoLicencia' => $data['codigoLicencia'],
+            'fechaAdquisision' => $data['fechaAdquisision'],
+            'fechaCaducacion' => $data['fechaCaducacion'],
+            'estadoLicencia' => $data['estadoLicencia']
         ]);
 
         return $this->db->getConnection()->lastInsertId();
     }
 
 
-    public function actualizarLicencia(
-        $idLicencia,
-        $idTipoLicencia,
-        $codigoLicencia,
-        $fechaAdquisision,
-        $fechaCaducacion,
-        $estadoLicencia
-    ) {
+public function actualizarLicencia($idLicencia, array $data)
+{
+    // VALIDAR SI EXISTE
+    $validar = $this->db->getConnection()->prepare("
+        SELECT idLicencia
+        FROM licencias
+        WHERE idLicencia = :idLicencia
+    ");
 
-        $stmt = $this->db->getConnection()->prepare("
+    $validar->execute([
+        'idLicencia' => $idLicencia
+    ]);
+
+    if ($validar->rowCount() === 0) {
+        throw new Exception("La licencia con ID $idLicencia no existe.");
+    }
+
+    // VALIDAR CÓDIGO DUPLICADO
+    if ($this->existeCodigoLicencia($data['codigoLicencia'], $idLicencia)) {
+        throw new Exception("El código de licencia ya existe para otra licencia.");
+    }
+
+    // ACTUALIZAR
+    $stmt = $this->db->getConnection()->prepare("
         UPDATE licencias
         SET idTipoLicencia = :idTipoLicencia,
             codigoLicencia = :codigoLicencia,
@@ -69,15 +82,15 @@ class LicenciasModel
         WHERE idLicencia = :idLicencia
     ");
 
-        return $stmt->execute([
-            'idLicencia' => $idLicencia,
-            'idTipoLicencia' => $idTipoLicencia,
-            'codigoLicencia' => $codigoLicencia,
-            'fechaAdquisision' => $fechaAdquisision,
-            'fechaCaducacion' => $fechaCaducacion,
-            'estadoLicencia' => $estadoLicencia
-        ]);
-    }
+    return $stmt->execute([
+        'idLicencia' => $idLicencia,
+        'idTipoLicencia' => $data['idTipoLicencia'],
+        'codigoLicencia' => $data['codigoLicencia'],
+        'fechaAdquisision' => $data['fechaAdquisision'],
+        'fechaCaducacion' => $data['fechaCaducacion'],
+        'estadoLicencia' => $data['estadoLicencia']
+    ]);
+}
 
     public function getAll()
     {
@@ -87,9 +100,19 @@ class LicenciasModel
             s.idTipoLicencia,
             t.nombreTipoLicencia,
             s.codigoLicencia,
-            s.estadoLicencia,
+
+            CASE
+                WHEN s.fechaCaducacion IS NOT NULL
+                    AND s.fechaCaducacion < CURDATE()
+                THEN 'Expirada'
+
+                ELSE s.estadoLicencia
+            END AS estadoLicencia,
+
             s.fechaAdquisision,
             s.fechaCaducacion,
+
+            c.idComputadora,
 
             CASE 
                 WHEN ld.id_licencia IS NOT NULL 
@@ -105,12 +128,19 @@ class LicenciasModel
         LEFT JOIN licencias_detalles ld
             ON ld.id_licencia = s.idLicencia
 
+        LEFT JOIN computadoras c
+            ON c.idComputadora = ld.id_computadora
+
         ORDER BY FIELD(
-            s.estadoLicencia,
+            estadoLicencia,
             'Instalada',
             'NoInstalada',
             'Expirada'
-        ) ASC";
+        ) ASC
+
+        LIMIT 0, 25;  
+        ";
+
 
         $resultado = $this->db->getConnection()->query($sql);
 
@@ -161,5 +191,21 @@ class LicenciasModel
         return [];
     }
 
-}
 
+    // funciona pra validar si codigo de licencia ya existe
+    public function existeCodigoLicencia($codigo, $idLicencia = null)
+    {
+        $sql = "SELECT COUNT(*) FROM Licencias WHERE codigoLicencia = :codigo";
+        $params = ['codigo' => $codigo];
+
+        if ($idLicencia) {
+            $sql .= " AND idLicencia != :idLicencia";
+            $params['idLicencia'] = $idLicencia;
+        }
+
+        $stmt = $this->db->getConnection()->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchColumn() > 0;
+    }
+
+}

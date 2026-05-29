@@ -2,8 +2,13 @@
 //     JAVASCRIPT CONTROL DE MODALES         
 
 // Funciones generales de apertura y cierre
-function abrirModal(idModal) {
+function abrirModal(idModal, reset = false) {
     const modal = document.getElementById(idModal);
+
+    if (idModal === 'modalLicencia' && reset) {
+        resetFormularioLicencia();
+    }
+
     modal.classList.remove('hidden');
     // Retraso milimétrico para simular la transición de opacidad suave
     setTimeout(() => {
@@ -13,7 +18,41 @@ function abrirModal(idModal) {
 
 function cerrarModal(idModal) {
     const modal = document.getElementById(idModal);
+
+    if (idModal === 'modalLicencia') {
+        resetFormularioLicencia();
+    }
+
     modal.classList.add('hidden');
+}
+
+function resetFormularioLicencia() {
+    const form = document.getElementById('formNuevaLicencia');
+    const encabezadoModal = document.getElementById('encabesadoModal');
+    const subtituloModal = document.getElementById('suptituloEcabesadoModal');
+    const btnSubmit = document.getElementById('btnSubmitLicencia');
+
+    if (form) {
+        form.reset();
+    }
+
+    const idLicenciaInput = document.getElementById('idLicencia');
+    if (idLicenciaInput) {
+        idLicenciaInput.value = '';
+    }
+
+    if (encabezadoModal) {
+        encabezadoModal.innerText = 'Registrar Nueva Licencia';
+    }
+
+    if (subtituloModal) {
+        subtituloModal.innerText = 'Llena los datos para añadir un software al inventario';
+    }
+
+    if (btnSubmit) {
+        btnSubmit.className = 'inline-flex items-center gap-2 bg-[#2CA1C8] hover:bg-[#1E85A8] text-white px-5 py-2.5 rounded-xl font-semibold text-sm shadow-md transition-all cursor-pointer';
+        btnSubmit.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16h2a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v7a2 2 0 002 2h2m3 4h4m-2-4v4m-7-8h10" /></svg> Guardar Licencia';
+    }
 }
 
 function normalizarTexto(valor) {
@@ -140,7 +179,6 @@ document.getElementById('formNuevaLicencia').addEventListener('submit', function
         })
         .then(data => {
             // Solo confirmar éxito si el servidor responde OK
-            alert("¡Licencia guardada con éxito!");
             cerrarModal('modalLicencia');
             window.location.reload();
         })
@@ -282,6 +320,18 @@ function prepararEdicion(boton) {
     const estadoLicenciaSelect = document.getElementById('estadoLicencia');
     const fechaAdquisicionInput = document.getElementById('fechaAdquisision');
     const fechaCaducacionInput = document.getElementById('fechaCaducacion');
+    const encabezadoModal = document.getElementById('encabesadoModal');
+    const subtituloModal = document.getElementById('suptituloEcabesadoModal');
+
+     // Cambiamos el texto del encabezado del modal a modo edición
+    if (encabezadoModal) {
+        encabezadoModal.innerText = 'Editar Licencia';
+    }
+
+    if (subtituloModal) {
+        subtituloModal.innerText = 'Edita los datos de la licencia';
+    }
+
 
     if (idLicenciaInput) idLicenciaInput.value = id;
     if (tipoLicenciaSelect) tipoLicenciaSelect.value = tipo;
@@ -330,8 +380,6 @@ async function cargarEstadisticas() {
         const base = window.BASE_URL || '';
         const url = `${base}/licencias/obtenerEstadisticas`;
 
-        console.log('Cargando estadísticas desde:', url);
-
         const response = await fetch(url);
 
         if (!response.ok) {
@@ -344,7 +392,7 @@ async function cargarEstadisticas() {
 
         const counts = {
             instalada: 0,
-            disponible: 0,
+            noInstalada: 0,
             expirada: 0
         };
 
@@ -359,15 +407,15 @@ async function cargarEstadisticas() {
 
                 const cantidad = parseInt(row.cantidad, 10) || 0;
 
-                if (estado.includes('instalada')) {
+                if (estado === 'instalada') {
 
                     counts.instalada += cantidad;
 
-                } else if (estado.includes('no instalada')) {
+                } else if (estado === 'noinstalada') {
 
-                    counts.disponible += cantidad;
+                    counts.noInstalada += cantidad;
 
-                } else if (estado.includes('expirada')) {
+                } else if (estado === 'expirada') {
 
                     counts.expirada += cantidad;
 
@@ -379,7 +427,7 @@ async function cargarEstadisticas() {
 
         // Actualizar cards
         if (vigElem) vigElem.textContent = counts.instalada;
-        if (disElem) disElem.textContent = counts.disponible;
+        if (disElem) disElem.textContent = counts.noInstalada;
         if (expElem) expElem.textContent = counts.expirada;
 
         console.log('Cards actualizadas:', counts);

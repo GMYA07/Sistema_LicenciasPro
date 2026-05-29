@@ -25,85 +25,68 @@ class LicenciasController
 
     public function guardar()
     {
-
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-            $idTipoLicencia = $_POST['idTipoLicencia'] ?? null;
-            $codigoLicencia = $_POST['codigoLicencia'] ?? null;
-            $estadoLicencia = $_POST['estadoLicencia'] ?? 'NoInstalada';
-            $fechaAdquisision = $_POST['fechaAdquisision'] ?? null;
-            $fechaCaducacion = $_POST['fechaCaducacion'] ?? null;
-            $idLicencia = $_POST['idLicencia'] ?? null;
+            try {
 
-            // ACTUALIZAR
-            if (!empty($idLicencia) && is_numeric($idLicencia)) {
+                $idLicencia = $_POST['idLicencia'] ?? null;
 
-                $resultado = $this->licenciasModel->actualizarLicencia(
-                    $idLicencia,
-                    $idTipoLicencia,
-                    $codigoLicencia,
-                    $fechaAdquisision,
-                    $fechaCaducacion,
-                    $estadoLicencia
-                );
+                $data = [
+                    'idTipoLicencia' => trim($_POST['idTipoLicencia'] ?? ''),
+                    'codigoLicencia' => trim($_POST['codigoLicencia'] ?? ''),
+                    'fechaAdquisision' => trim($_POST['fechaAdquisision'] ?? ''),
+                    'fechaCaducacion' => trim($_POST['fechaCaducacion'] ?? ''),
+                    'estadoLicencia' => trim($_POST['estadoLicencia'] ?? '')
+                ];
 
-            }
-            // CREAR
-            else {
+                // VALIDACIONES
+                if (empty($data['idTipoLicencia'])) {
+                    throw new Exception("Debe seleccionar un tipo de licencia.");
+                }
 
-                $resultado = $this->licenciasModel->guardarLicencia(
-                    $idTipoLicencia,
-                    $codigoLicencia,
-                    $fechaAdquisision,
-                    $fechaCaducacion,
-                    $estadoLicencia
-                );
-            }
+                if (empty($data['codigoLicencia'])) {
+                    throw new Exception("El código de licencia es obligatorio.");
+                }
 
-            if ($resultado) {
+                if (empty($data['fechaAdquisision'])) {
+                    throw new Exception("La fecha de adquisición es obligatoria.");
+                }
 
-                header('Location: ' . BASE_URL . '/licencias');
-                exit;
+                if (empty($data['fechaCaducacion'])) {
+                    throw new Exception("La fecha de caducación es obligatoria.");
+                }
 
-            } else {
+                if (strtotime($data['fechaCaducacion']) < strtotime($data['fechaAdquisision'])) {
+                    throw new Exception("La fecha de caducación no puede ser menor a la fecha de adquisición.");
+                }
 
-                echo "Error al guardar la licencia.";
+                // ACTUALIZAR
+                if (!empty($idLicencia)) {
 
-            }
-        }
-    }
-    // 3. RECIBE LOS DATOS DEL MINI-FORMULARIO DE TIPOS (MODAL 2)
-    public function guardarTipo()
-    {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $nombre = $_POST['nombreTipoLicencia'] ?? null;
-            $id = $_POST['idTipoLicencia'] ?? null;
+                    $resultado = $this->licenciasModel->actualizarLicencia($idLicencia, $data);
 
-            // Si llega un id, actualizamos; si no, creamos uno nuevo
-            if (!empty($id) && is_numeric($id)) {
-                $resultado = $this->tipoLicenciasModel->editarTipoLicencia($id, $nombre);
-            } else {
-                $resultado = $this->tipoLicenciasModel->guardarTipoLicencia($nombre);
-            }
+                    if (!$resultado) {
+                        throw new Exception("No se pudo actualizar la licencia.");
+                    }
 
-            // Si la petición viene desde fetch con ?ajax=1, devolvemos JSON útil para depuración
-            if (isset($_GET['ajax'])) {
-                header('Content-Type: application/json');
-                echo json_encode([
-                    'post' => $_POST,
-                    'action' => (!empty($id) && is_numeric($id)) ? 'update' : 'insert',
-                    'result' => $resultado
-                ]);
-                exit;
-            }
+                    $_SESSION['mensaje_exito'] = 'Licencia actualizada correctamente.';
+                }
 
-            if ($resultado) {
-                // Redirecciona de vuelta para recargar la página y que aparezca en el select
-                header('Location: ' . BASE_URL . '/licencias');
-                exit;
-            } else {
-                http_response_code(500);
-                echo "Error al guardar o actualizar el tipo de licencia.";
+                // CREAR
+                else {
+
+                    $resultado = $this->licenciasModel->guardarLicencia($data);
+
+                    if (!$resultado) {
+                        throw new Exception("No se pudo crear la licencia.");
+                    }
+
+                    $_SESSION['mensaje_exito'] = 'Licencia creada correctamente.';
+                }
+
+            } catch (Exception $e) {
+        
+                $_SESSION['mensaje_error'] = 'Error al guardar la licencia: ' . $e->getMessage()    ;
             }
         }
     }
