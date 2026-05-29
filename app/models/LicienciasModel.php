@@ -238,7 +238,7 @@ public function actualizarLicencia($idLicencia, array $data)
         }
     }
 
-}
+
     //funcoin para traer los enum 
     public function obtenerEstadosLicencia()
     {
