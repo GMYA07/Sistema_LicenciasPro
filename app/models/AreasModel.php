@@ -1,14 +1,17 @@
 <?php
 
 require_once __DIR__ . '/../../core/Database.php';
-class AreasModel {
+class AreasModel
+{
     private $db;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->db = new Database();
     }
 
-    public function obtenerArea($idArea) {
+    public function obtenerArea($idArea)
+    {
 
         $stmt = $this->db->getConnection()->prepare("SELECT idArea, nombreArea, edificio, numEquipos, estadoCentroComputo, (SELECT COUNT(*) FROM computadoras WHERE idAreaComputadora = areas.idArea) AS totalComputadoras FROM areas WHERE idArea = :id");
 
@@ -21,7 +24,8 @@ class AreasModel {
         // Retornará el arreglo con los datos, o false si no encontró nada
         return $area;
     }
-    public function obtenerAreas(){
+    public function obtenerAreas()
+    {
 
         $sql = "SELECT 
                 idArea, 
@@ -39,7 +43,8 @@ class AreasModel {
     }
 
     // Método para agregar un área
-    public function agregarArea(array $datos) {
+    public function agregarArea(array $datos)
+    {
         if (!$this->validarNombreAreaUnico($datos['edificio'])) {
             return false; // El nombre del área no es único
         }
@@ -50,39 +55,41 @@ class AreasModel {
         ");
 
         return $stmt->execute([
-            'nombreArea'          => $datos['nombreArea'],
-            'edificio'            => $datos['edificio'],
-            'numEquipos'          => (int) $datos['numEquipos'],
+            'nombreArea' => $datos['nombreArea'],
+            'edificio' => $datos['edificio'],
+            'numEquipos' => (int) $datos['numEquipos'],
             // Usamos un operador null coalescing para dar robustez y valores por defecto
-            'estadoCentroComputo' => (bool) ($datos['estadoCentroComputo'] ?? 0)
+            'estadoCentroComputo' => (int) ($datos['estadoCentroComputo'] ?? 0)
         ]);
     }
 
     // Método para actualizar un área
-    public function actualizarArea(int $idArea, array $datos) {
+    public function actualizarArea(int $idArea, array $datos)
+    {
 
-    if (!$this->validarNombreAreaUnico($datos['edificio'], $idArea)) {
-        return false; // El nombre del área no es único
-    }
+        if (!$this->validarNombreAreaUnico($datos['edificio'], $idArea)) {
+            return false; // El nombre del área no es único
+        }
 
         $stmt = $this->db->getConnection()->prepare("
             UPDATE areas 
             SET nombreArea = :nombreArea, edificio = :edificio, numEquipos = :numEquipos, estadoCentroComputo = :estadoCentroComputo
             WHERE idArea = :idArea
         ");
-    
+
         return $stmt->execute([
-            'idArea'              => $idArea,
-            'nombreArea'          => $datos['nombreArea'],
-            'edificio'            => $datos['edificio'],
-            'numEquipos'          => (int) $datos['numEquipos'],
+            'idArea' => $idArea,
+            'nombreArea' => $datos['nombreArea'],
+            'edificio' => $datos['edificio'],
+            'numEquipos' => (int) $datos['numEquipos'],
             // Usamos un operador null coalescing para dar robustez y valores por defecto
-            'estadoCentroComputo' => (bool) ($datos['estadoCentroComputo'] ?? false)
+            'estadoCentroComputo' => (int) ($datos['estadoCentroComputo'] ?? 0) 
         ]);
     }
 
     // Método para eliminar un área
-    public function eliminarArea(int $idArea) {
+    public function eliminarArea(int $idArea)
+    {
         $stmt = $this->db->getConnection()->prepare(
             "UPDATE areas SET estadoCentroComputo = 0 WHERE idArea = :id"
         );
@@ -92,7 +99,8 @@ class AreasModel {
 
 
     // metodo de validacion para el formulario de areas de nombre de area unico
-    public function validarNombreAreaUnico(string $edificio, ?int $idArea = null): bool {
+    public function validarNombreAreaUnico(string $edificio, ?int $idArea = null): bool
+    {
         $sql = "SELECT COUNT(*) FROM areas WHERE edificio = :edificio AND estadoCentroComputo = 1";
         $params = ['edificio' => $edificio];
 
