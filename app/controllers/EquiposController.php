@@ -252,7 +252,10 @@ class EquiposController {
             header('Location: ' . BASE_URL . '/equipos/area?idArea=' . $idArea);
             exit;
         }
-        
+
+        //Actualizar el estado de la licencia
+
+
         //Si se pasaron todas las validaciones pues se asigno esa licencia a ese equipo
 
         $_SESSION['mensaje_exito'] = "¡La licencia se asigno correctamente!";

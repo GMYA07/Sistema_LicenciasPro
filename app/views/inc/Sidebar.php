@@ -31,23 +31,24 @@
                     </svg>
                     Equipos
                 </a>
-            </div>
-
-            <div>
-                <p class="px-4 text-xs font-semibold text-[#2CA1C8] uppercase tracking-wider mb-2">Software</p>
 
                 <a href="<?= BASE_URL ?>/areas"
-                    class="flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl text-[#E6E6E6] hover:bg-[#1E85A8] hover:text-white transition-all group">
+                   class="flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl text-[#E6E6E6] hover:bg-[#1E85A8] hover:text-white transition-all group">
                     <div class="flex items-center gap-3">
                         <svg xmlns="http://www.w3.org/2000/svg"
-                            class="h-5 w-5 text-[#2CA1C8] group-hover:text-white transition-colors" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                             class="h-5 w-5 text-[#2CA1C8] group-hover:text-white transition-colors" fill="none"
+                             viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M3 21h18M5 21V7a2 2 0 012-2h3V3h4v2h3a2 2 0 012 2v14M9 9h.01M9 13h.01M9 17h.01M15 9h.01M15 13h.01M15 17h.01" />
+                                  d="M3 21h18M5 21V7a2 2 0 012-2h3V3h4v2h3a2 2 0 012 2v14M9 9h.01M9 13h.01M9 17h.01M15 9h.01M15 13h.01M15 17h.01" />
                         </svg>
                         Areas
                     </div>
                 </a>
+
+            </div>
+
+            <div>
+                <p class="px-4 text-xs font-semibold text-[#2CA1C8] uppercase tracking-wider mb-2">Software</p>
 
                 <a href="<?= BASE_URL ?>/licencias"
                     class="flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl text-[#E6E6E6] hover:bg-[#1E85A8] hover:text-white transition-all group">
