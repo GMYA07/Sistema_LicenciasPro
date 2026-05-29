@@ -4,11 +4,17 @@
 
     <div class="flex items-center gap-4">
         <div class="p-3 bg-[#2CA1C8]/10 rounded-2xl text-[#2CA1C8]">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor" stroke-width="1.5">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
-            </svg>
+    <svg xmlns="http://www.w3.org/2000/svg"
+        class="h-8 w-8"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="1.5">
+
+        <path stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M3 21h18M5 21V7a2 2 0 012-2h3V3h4v2h3a2 2 0 012 2v14M9 9h.01M9 13h.01M9 17h.01M15 9h.01M15 13h.01M15 17h.01" />
+    </svg>
         </div>
 
         <div>
@@ -95,7 +101,7 @@
                     </th>
                     <th scope="col"
                         class="px-6 py-3.5 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                        Número de Equipos
+                        Equipos por area
                     </th>
                     <th scope="col"
                         class="px-6 py-3.5 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
@@ -216,11 +222,6 @@
 <div id="modalArea"
     class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 invisible opacity-0 pointer-events-none transition-all duration-300 ease-out">
 
-    <!-- 
-      CONTENEDOR DEL MODAL:
-      - 'transform scale-95 opacity-0' prepara la animación de entrada (vuela ligeramente hacia el frente aumentando su tamaño).
-      - 'rounded-2xl' para hacer juego con las tarjetas y la tabla principal.
-    -->
     <div id="modalContentArea"
         class="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 relative transform scale-95 opacity-0 transition-all duration-300 ease-out mx-4">
 
