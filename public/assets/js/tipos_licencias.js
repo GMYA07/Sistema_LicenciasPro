@@ -24,7 +24,6 @@ document.getElementById('formNuevoTipo').addEventListener('submit', function (ev
             return respuesta.text();
         })
         .then(data => {
-            alert(idValue === "" ? "¡Tipo de licencia guardado con éxito!" : "¡Tipo de licencia actualizado con éxito!");
             cerrarSubModal();
             window.location.reload();
         })
