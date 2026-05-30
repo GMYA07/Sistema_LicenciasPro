@@ -166,6 +166,10 @@
                 </th>
 
                 <th class="px-3 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                    Capacidad (Activas/Máx)
+                </th>
+
+                <th class="px-3 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                     Equipo Asignado
                 </th>
 
@@ -218,46 +222,58 @@
 
                         <!-- CÓDIGO -->
                         <td class="px-3 py-3 whitespace-nowrap">
-
-                            <p
-                                class="inline-flex items-center px-2 py-1 rounded-xl bg-gray-100 border border-gray-200 text-xs text-gray-700 font-mono">
-
-                                <?php echo htmlspecialchars($licencia['codigoLicencia']); ?>
-
-                            </p>
-
-                            <p class="text-xs text-gray-400">
+                            <div class="flex items-center gap-2">
+                                <code class="font-mono text-xs bg-gray-100 border border-gray-200 px-2 py-1 rounded-xl text-gray-700 product-key" data-key="<?php echo htmlspecialchars($licencia['codigoLicencia']); ?>">••••••••</code>
+                                <button type="button" class="text-gray-400 hover:text-gray-600 transition-colors toggle-key-visibility cursor-pointer" aria-label="Mostrar clave">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-1">
                                 Clave de producto
                             </p>
+                        </td>
 
+                        <!-- CAPACIDAD -->
+                        <td class="px-3 py-3 whitespace-nowrap">
+                            <div class="flex items-center gap-2">
+                                <?php 
+                                $totalAsignados = (int)($licencia['totalAsignados'] ?? 0);
+                                $numPermitVinculados = (int)($licencia['numPermitVinculados'] ?? 1);
+                                if ($numPermitVinculados < 1) $numPermitVinculados = 1;
+                                $porcentaje = round(($totalAsignados / $numPermitVinculados) * 100);
+                                $colorProgreso = 'bg-cyan-500';
+                                if ($totalAsignados >= $numPermitVinculados) {
+                                    $colorProgreso = 'bg-red-500';
+                                }
+                                ?>
+                                <span class="text-sm font-semibold text-gray-700">
+                                    <?php echo $totalAsignados; ?> / <?php echo $numPermitVinculados; ?>
+                                </span>
+                            </div>
+                            <div class="w-24 bg-gray-200 rounded-full h-1.5 mt-1 overflow-hidden">
+                                <div class="<?php echo $colorProgreso; ?> h-1.5 rounded-full" style="width: <?php echo min($porcentaje, 100); ?>%"></div>
+                            </div>
                         </td>
 
                         <!-- EQUIPO -->
-                        <td class="px-3 py-3 whitespace-nowrap">
-
-                            <p class="text-sm text-gray-700">
-
-                                <?php if ($licencia['equipoAsignado'] === 1): ?>
-
-                                    <span class="text-green-600 font-semibold">
-                                        Equipo asignado a
-                                        <?php echo htmlspecialchars($licencia['modelo'] ?? 'N/A'); ?>
-                                    </span>
-
-                                <?php else: ?>
-
-                                    <span class="text-red-600 font-semibold">
-                                        Equipo no asignado
-                                    </span>
-
-                                <?php endif; ?>
-
+                        <td class="px-3 py-3">
+                            <?php if (!empty($licencia['computadorasAsignadas'])): ?>
+                                <ul class="list-disc list-inside text-xs text-green-700 font-medium space-y-0.5">
+                                    <?php foreach (explode('||', $licencia['computadorasAsignadas']) as $comp): ?>
+                                        <li><?php echo htmlspecialchars($comp); ?></li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            <?php else: ?>
+                                <span class="text-xs text-red-500 font-semibold">
+                                    Sin equipos asignados
+                                </span>
+                            <?php endif; ?>
+                            <p class="text-xs text-gray-400 mt-1">
+                                Equipos vinculados
                             </p>
-
-                            <p class="text-xs text-gray-400">
-                                Disponible para instalación
-                            </p>
-
                         </td>
 
                         <!-- FECHA -->
@@ -324,7 +340,7 @@
                         <td class="px-3 py-3 whitespace-nowrap text-center">
 
                             <button type="button"
-                                class="inline-flex items-center justify-center p-2 rounded-lg bg-cyan-50 text-[#2CA1C8] hover:bg-cyan-100 transition-all"
+                                class="inline-flex items-center justify-center p-2 rounded-lg bg-cyan-50 text-[#2CA1C8] hover:bg-cyan-100 transition-all cursor-pointer"
                                 title="Editar licencia" aria-label="Editar licencia"
                                 data-id="<?php echo (int) $licencia['idLicencia']; ?>"
                                 data-tipo="<?php echo (int) $licencia['idTipoLicencia']; ?>"
@@ -332,6 +348,7 @@
                                 data-estado="<?php echo htmlspecialchars($licencia['estadoLicencia'], ENT_QUOTES, 'UTF-8'); ?>"
                                 data-fechaadq="<?php echo htmlspecialchars($licencia['fechaAdquisision'], ENT_QUOTES, 'UTF-8'); ?>"
                                 data-fechacad="<?php echo htmlspecialchars($licencia['fechaCaducacion'], ENT_QUOTES, 'UTF-8'); ?>"
+                                data-numpermit="<?php echo (int) ($licencia['numPermitVinculados'] ?? 1); ?>"
                                 onclick="prepararEdicion(this)">
 
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
@@ -352,7 +369,7 @@
 
                 <tr id="sinResultadosLicencias" class="hidden">
 
-                    <td colspan="7" class="px-3 py-6 text-center text-sm text-gray-400">
+                    <td colspan="8" class="px-3 py-6 text-center text-sm text-gray-400">
                         No se encontraron licencias con esos criterios.
                     </td>
 
@@ -362,7 +379,7 @@
 
                 <tr>
 
-                    <td colspan="7" class="px-3 py-4 text-center text-xs text-gray-400">
+                    <td colspan="8" class="px-3 py-4 text-center text-xs text-gray-400">
                         No hay licencias registradas. ¡Agrega tu primera licencia!
                     </td>
 
@@ -449,6 +466,14 @@
                 <input type="text" id="codigoLicencia" name="codigoLicencia" required
                     placeholder="Ej: XXXXX-XXXXX-XXXXX-XXXXX"
                     class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-mono focus:outline-none focus:border-[#2CA1C8] focus:bg-white transition-all">
+            </div>
+
+            <!-- Capacidad de Licencia (numPermitVinculados) -->
+            <div>
+                <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Capacidad Máxima de Equipos Vinculados (Activaciones)</label>
+                <input type="number" id="numPermitVinculados" name="numPermitVinculados" required min="1" value="1"
+                    placeholder="Ej: 5"
+                    class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#2CA1C8] focus:bg-white transition-all">
             </div>
 
             <!-- Estado Licencia (ENUM) -->
@@ -545,20 +570,41 @@
         <div class="p-6 flex flex-col gap-6">
             <!-- Mini Formulario -->
             <form id="formNuevoTipo"
-                class="bg-gray-50 border border-gray-100 p-4 rounded-xl flex flex-col sm:flex-row gap-3 items-end">
+                class="bg-gray-50 border border-gray-100 p-4 rounded-xl flex flex-col gap-3">
                 <input type="hidden" id="idTipoLicenciaTipo" name="idTipoLicencia" value="">
 
-                <div class="flex-1 w-full">
-                    <label id="labelFormTipo"
-                        class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
-                        Nuevo Tipo de Licencia
-                    </label>
-                    <input type="text" id="nombreTipoLicencia" name="nombreTipoLicencia" required
-                        placeholder="Ej: Diseño Gráfico"
-                        class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-[#2CA1C8] transition-all">
+                <div class="flex flex-col sm:flex-row gap-3 w-full items-end">
+                    <div class="flex-1 w-full">
+                        <label id="labelFormTipo"
+                            class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                            Nuevo Tipo de Licencia
+                        </label>
+                        <input type="text" id="nombreTipoLicencia" name="nombreTipoLicencia" required
+                            placeholder="Ej: Diseño Gráfico"
+                            class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-[#2CA1C8] transition-all">
+                    </div>
+
+                    <div class="flex-1 w-full relative">
+                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                            Categoría
+                        </label>
+                        <select id="categoriaLicencia" name="categoriaLicencia" required
+                            class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2 text-sm text-gray-700 focus:outline-none focus:border-[#2CA1C8] transition-all appearance-none">
+                            <option value="" disabled selected>Categoría...</option>
+                            <option value="SO">Sistemas Operativos (SO)</option>
+                            <option value="Office">Office</option>
+                            <option value="Antivirus">Antivirus</option>
+                            <option value="Otros">Otros</option>
+                        </select>
+                        <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-gray-400 pt-7">
+                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="flex gap-2 w-full sm:w-auto">
+                <div class="flex gap-2 w-full justify-end mt-2">
                     <button type="button" id="btnCancelarEdicion" onclick="limpiarFormularioTipo()"
                         class="hidden bg-gray-300 text-gray-700 px-3 py-2 rounded-xl font-semibold text-sm h-[38px] cursor-pointer">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block mr-2" fill="none"
@@ -568,7 +614,7 @@
                         Cancelar
                     </button>
                     <button type="submit" id="btnSubmitTipo"
-                        class="w-full sm:w-auto bg-[#2CA1C8] hover:bg-[#1E85A8] text-white px-4 py-2 rounded-xl font-semibold text-sm transition-all h-[38px] cursor-pointer">
+                        class="bg-[#2CA1C8] hover:bg-[#1E85A8] text-white px-5 py-2 rounded-xl font-semibold text-sm transition-all h-[38px] cursor-pointer">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block mr-2" fill="none"
                             viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
@@ -580,9 +626,8 @@
 
             <!-- Tabla de Tipos Existentes -->
             <div class="flex flex-col">
-                <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Categorías
-                    Registradas</label>
-                <div class="border border-gray-200 rounded-xl overflow-hidden max-h-52 overflow-y-auto">
+                <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Categorías Registradas</label>
+                <div class="border border-gray-200 rounded-xl overflow-hidden max-h-52 overflow-y-auto bg-white">
                     <table class="min-w-full divide-y divide-gray-200 text-sm">
                         <tbody class="bg-white divide-y divide-gray-100">
                             <?php if (!empty($tipodeLicencias)): ?>
@@ -590,12 +635,15 @@
                                     <tr>
                                         <td class="px-4 py-2.5 text-gray-700 font-medium">
                                             <?php echo htmlspecialchars($tipo['nombreTipoLicencia']); ?>
+                                            <span class="ml-2 text-[10px] px-2 py-0.5 rounded-full bg-cyan-50 text-[#2CA1C8] font-bold border border-cyan-100">
+                                                <?php echo htmlspecialchars($tipo['categoriaLicencia'] ?? 'Otros'); ?>
+                                            </span>
                                         </td>
                                         <td class="px-4 py-2.5 text-right">
-                                            <!-- Pasamos el ID real de la base de datos a las funciones de JS -->
+                                            <!-- Pasamos el ID, el nombre y la categoría real de la base de datos a las funciones de JS -->
                                             <button type="button"
-                                                onclick='editarTipo(<?php echo (int) $tipo["idTipoLicencia"]; ?>, <?php echo json_encode($tipo["nombreTipoLicencia"], JSON_HEX_APOS | JSON_HEX_QUOT); ?>)'
-                                                class="inline-flex items-center justify-center p-2 rounded-lg bg-cyan-50 text-[#2CA1C8] hover:bg-cyan-100 transition-all mr-2"
+                                                onclick='editarTipo(<?php echo (int) $tipo["idTipoLicencia"]; ?>, <?php echo json_encode($tipo["nombreTipoLicencia"], JSON_HEX_APOS | JSON_HEX_QUOT); ?>, <?php echo json_encode($tipo["categoriaLicencia"] ?? "", JSON_HEX_APOS | JSON_HEX_QUOT); ?>)'
+                                                class="inline-flex items-center justify-center p-2 rounded-lg bg-cyan-50 text-[#2CA1C8] hover:bg-cyan-100 transition-all mr-2 cursor-pointer"
                                                 title="Editar tipo de licencia" aria-label="Editar tipo de licencia">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
                                                     viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -605,7 +653,7 @@
                                             </button>
                                             <button type="button"
                                                 onclick="confirmEliminar(<?php echo (int) $tipo['idTipoLicencia']; ?>)"
-                                                class="inline-flex items-center justify-center p-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-all"
+                                                class="inline-flex items-center justify-center p-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-all cursor-pointer"
                                                 title="Eliminar tipo de licencia" aria-label="Eliminar tipo de licencia">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
                                                     viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -645,5 +693,6 @@
 
 <script>window.BASE_URL = '<?= BASE_URL ?>';</script>
 <script src="<?= BASE_URL ?>/assets/js/licencias.js?v=<?= time() ?>"></script>
+<script src="<?= BASE_URL ?>/assets/js/tipos_licencias.js?v=<?= time() ?>"></script>
 
 <?php include __DIR__ . '/../inc/Footer.php'; ?>

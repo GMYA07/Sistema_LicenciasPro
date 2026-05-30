@@ -19,6 +19,7 @@ class LicenciasModel
         (
             idTipoLicencia,
             codigoLicencia,
+            numPermitVinculados,
             fechaAdquisision,
             fechaCaducacion,
             estadoLicencia
@@ -27,6 +28,7 @@ class LicenciasModel
         (
             :idTipoLicencia,
             :codigoLicencia,
+            :numPermitVinculados,
             :fechaAdquisision,
             :fechaCaducacion,
             :estadoLicencia
@@ -40,6 +42,7 @@ class LicenciasModel
         $stmt->execute([
             'idTipoLicencia' => $data['idTipoLicencia'],
             'codigoLicencia' => $data['codigoLicencia'],
+            'numPermitVinculados' => $data['numPermitVinculados'] ?? 1,
             'fechaAdquisision' => $data['fechaAdquisision'],
             'fechaCaducacion' => $data['fechaCaducacion'],
             'estadoLicencia' => $data['estadoLicencia']
@@ -76,6 +79,7 @@ public function actualizarLicencia($idLicencia, array $data)
         UPDATE licencias
         SET idTipoLicencia = :idTipoLicencia,
             codigoLicencia = :codigoLicencia,
+            numPermitVinculados = :numPermitVinculados,
             fechaAdquisision = :fechaAdquisision,
             fechaCaducacion = :fechaCaducacion,
             estadoLicencia = :estadoLicencia
@@ -86,6 +90,7 @@ public function actualizarLicencia($idLicencia, array $data)
         'idLicencia' => $idLicencia,
         'idTipoLicencia' => $data['idTipoLicencia'],
         'codigoLicencia' => $data['codigoLicencia'],
+        'numPermitVinculados' => $data['numPermitVinculados'] ?? 1,
         'fechaAdquisision' => $data['fechaAdquisision'],
         'fechaCaducacion' => $data['fechaCaducacion'],
         'estadoLicencia' => $data['estadoLicencia']
@@ -100,6 +105,7 @@ public function actualizarLicencia($idLicencia, array $data)
             s.idTipoLicencia,
             t.nombreTipoLicencia,
             s.codigoLicencia,
+            s.numPermitVinculados,
 
             CASE
                 WHEN s.fechaCaducacion IS NOT NULL
@@ -112,13 +118,8 @@ public function actualizarLicencia($idLicencia, array $data)
             s.fechaAdquisision,
             s.fechaCaducacion,
 
-            c.idComputadora,
-
-            CASE 
-                WHEN ld.id_licencia IS NOT NULL 
-                THEN 1
-                ELSE 0
-            END AS equipoAsignado
+            COUNT(ld.id_computadora) as totalAsignados,
+            GROUP_CONCAT(CONCAT(c.Marca, ' ', c.Modelo, ' (', c.Serial, ')') SEPARATOR '||') AS computadorasAsignadas
 
         FROM licencias s
 
@@ -131,13 +132,14 @@ public function actualizarLicencia($idLicencia, array $data)
         LEFT JOIN computadoras c
             ON c.idComputadora = ld.id_computadora
 
+        GROUP BY s.idLicencia, s.idTipoLicencia, t.nombreTipoLicencia, s.codigoLicencia, s.numPermitVinculados, s.estadoLicencia, s.fechaAdquisision, s.fechaCaducacion
+
         ORDER BY FIELD(
             estadoLicencia,
             'Instalada',
             'NoInstalada',
             'Expirada'
         ) ASC
-
         LIMIT 0, 25;  
         ";
 
@@ -181,8 +183,10 @@ public function actualizarLicencia($idLicencia, array $data)
         $stmt = $this->db->getConnection()->prepare("
         SELECT
              l.idLicencia,
+             l.idTipoLicencia,
              t.nombreTipoLicencia,
              l.codigoLicencia,
+             l.numPermitVinculados,
              l.fechaAdquisision,
              l.fechaCaducacion,
              l.estadoLicencia 
@@ -269,6 +273,64 @@ public function actualizarLicencia($idLicencia, array $data)
         $stmt = $this->db->getConnection()->prepare($sql);
         $stmt->execute($params);
         return $stmt->fetchColumn() > 0;
+    }
+
+    // Helper to count active links for a license
+    public function contarComputadorasVinculadas($idLicencia) {
+        $stmt = $this->db->getConnection()->prepare("SELECT COUNT(*) FROM licencias_detalles WHERE id_licencia = :idLicencia");
+        $stmt->execute(['idLicencia' => $idLicencia]);
+        return (int) $stmt->fetchColumn();
+    }
+
+    // Helper to check if a computer is already linked to a specific license
+    public function esEquipoVinculadoALicencia($idEquipo, $idLicencia) {
+        $stmt = $this->db->getConnection()->prepare("SELECT COUNT(*) FROM licencias_detalles WHERE id_computadora = :idEquipo AND id_licencia = :idLicencia");
+        $stmt->execute(['idEquipo' => $idEquipo, 'idLicencia' => $idLicencia]);
+        return (int) $stmt->fetchColumn() > 0;
+    }
+
+    // Fetch licenses that are not expired and still have activation slots left
+    public function obtenerLicenciasDisponiblesInstalacion() {
+        $sql = "
+        SELECT 
+            l.idLicencia,
+            t.nombreTipoLicencia,
+            l.codigoLicencia,
+            l.numPermitVinculados,
+            l.fechaAdquisision,
+            l.fechaCaducacion,
+            l.estadoLicencia,
+            (SELECT COUNT(*) FROM licencias_detalles WHERE id_licencia = l.idLicencia) as totalAsignados
+        FROM licencias l
+        INNER JOIN tipolicencias t ON t.idTipoLicencia = l.idTipoLicencia
+        WHERE (l.fechaCaducacion IS NULL OR l.fechaCaducacion >= CURDATE())
+          AND l.estadoLicencia != 'Expirada'
+        HAVING totalAsignados < COALESCE(l.numPermitVinculados, 1)
+        ";
+        $resultado = $this->db->getConnection()->query($sql);
+        return $resultado->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Automatically update the state of the license based on current active links
+    public function actualizarEstadoAutomatico($idLicencia) {
+        $lic = $this->obtenerLicenciasPorId($idLicencia);
+        if (!$lic) return;
+        
+        // 1. Check if expired
+        if (!empty($lic['fechaCaducacion']) && $lic['fechaCaducacion'] !== '0000-00-00') {
+            if (strtotime($lic['fechaCaducacion']) < time()) {
+                $stmt = $this->db->getConnection()->prepare("UPDATE licencias SET estadoLicencia = 'Expirada' WHERE idLicencia = :id");
+                $stmt->execute(['id' => $idLicencia]);
+                return;
+            }
+        }
+        
+        // 2. Count active links and update status
+        $links = $this->contarComputadorasVinculadas($idLicencia);
+        $nuevoEstado = ($links > 0) ? 'Instalada' : 'NoInstalada';
+        
+        $stmt = $this->db->getConnection()->prepare("UPDATE licencias SET estadoLicencia = :estado WHERE idLicencia = :id");
+        $stmt->execute(['estado' => $nuevoEstado, 'id' => $idLicencia]);
     }
 
 }
