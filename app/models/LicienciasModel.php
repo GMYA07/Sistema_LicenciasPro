@@ -201,13 +201,7 @@ public function actualizarLicencia($idLicencia, array $data)
 
     }
 
-    public function asignarLicenciaEquipo($data){
-        $stmt = $this->db->getConnection()->prepare("INSERT INTO licencias_detalles (id_computadora, id_licencia) VALUES (:idComputadora, :idLicencia)");
-        $stmt->bindParam(':idComputadora', $data['idEquipo']);
-        $stmt->bindParam(':idLicencia', $data['idLicencia']);
 
-        return $stmt->execute();
-    }
 
     public function obtenerLicenciasEquipoVinculado($idEquipo){
 
@@ -228,18 +222,6 @@ public function actualizarLicencia($idLicencia, array $data)
         $stmt->execute(['idComputadora' => $idEquipo]);
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public function eliminarRelacionLicenciaEquipo($data){
-        try {
-            $stmt = $this->db->getConnection()->prepare("DELETE FROM licencias_detalles WHERE id_computadora = :idComputadora AND id_licencia = :idLicencia");
-            $stmt->bindParam(':idComputadora', $data['idComputadora']);
-            $stmt->bindParam(':idLicencia', $data['idLicencia']);
-            return $stmt->execute();
-        }catch (exception $e){
-            echo $e->getMessage();
-            return false;
-        }
     }
 
 
@@ -315,7 +297,7 @@ public function actualizarLicencia($idLicencia, array $data)
     public function actualizarEstadoAutomatico($idLicencia) {
         $lic = $this->obtenerLicenciasPorId($idLicencia);
         if (!$lic) return;
-        
+
         // 1. Check if expired
         if (!empty($lic['fechaCaducacion']) && $lic['fechaCaducacion'] !== '0000-00-00') {
             if (strtotime($lic['fechaCaducacion']) < time()) {
@@ -324,13 +306,98 @@ public function actualizarLicencia($idLicencia, array $data)
                 return;
             }
         }
-        
+
         // 2. Count active links and update status
         $links = $this->contarComputadorasVinculadas($idLicencia);
         $nuevoEstado = ($links > 0) ? 'Instalada' : 'NoInstalada';
-        
+
         $stmt = $this->db->getConnection()->prepare("UPDATE licencias SET estadoLicencia = :estado WHERE idLicencia = :id");
         $stmt->execute(['estado' => $nuevoEstado, 'id' => $idLicencia]);
+    }
+
+    public function asignarLicenciaEquipo($data){
+        try {
+            $conexion = $this->db->getConnection();
+
+            //Iniciamos la transacción
+            $conexion->beginTransaction();
+
+            //Hacemos el INSERT
+            $stmt = $conexion->prepare("INSERT INTO licencias_detalles (id_computadora, id_licencia) VALUES (:idComputadora, :idLicencia)");
+            $stmt->bindParam(':idComputadora', $data['idEquipo']);
+            $stmt->bindParam(':idLicencia', $data['idLicencia']);
+            $stmt->execute();
+
+            //Hacemos el UPDATE
+            $stmt2 = $conexion->prepare("UPDATE licencias SET estadoLicencia = 'Instalada' WHERE idLicencia = :idLicencia");
+            $stmt2->execute(['idLicencia' => $data['idLicencia']]);
+
+            //guardamos todo de forma permanente
+            $conexion->commit();
+
+            return true;
+
+        }catch (PDOException $e){
+            echo $e->getMessage();
+            return false;
+        }
+    }
+
+    public function eliminarRelacionLicenciaEquipo($data){
+        try {
+            $stmt = $this->db->getConnection()->prepare("DELETE FROM licencias_detalles WHERE id_computadora = :idComputadora AND id_licencia = :idLicencia");
+            $stmt->bindParam(':idComputadora', $data['idComputadora']);
+            $stmt->bindParam(':idLicencia', $data['idLicencia']);
+            return $stmt->execute();
+        }catch (exception $e){
+            echo $e->getMessage();
+            return false;
+        }
+    }
+
+    public function validarReglasAsignacion($idLicencia,$idComputadora) {
+        $conexion = $this->db->getConnection();
+
+        //Validacion para ver si ya tiene exactamente esa licencia ya asignada
+        $stmt1 = $conexion->prepare("SELECT COUNT(*) FROM licencias_detalles WHERE id_licencia = ? AND id_computadora = ?");
+        $stmt1->execute([$idLicencia, $idComputadora]);
+
+        if ($stmt1->fetchColumn() > 0) {
+            return "El equipo ya tiene esta licencia específica vinculada.";
+        }
+
+        //2da validacion para ver que categorias de licencias son y si cumplen para asignarle
+        $stmt2 = $conexion->prepare("
+            SELECT t.categoriaLicencia, t.nombreTipoLicencia 
+            FROM licencias l 
+            INNER JOIN tipolicencias t ON l.idTipoLicencia = t.idTipoLicencia 
+            WHERE l.idLicencia = ?
+        ");
+        $stmt2->execute([$idLicencia]);
+        $infoLicencia = $stmt2->fetch(PDO::FETCH_ASSOC);
+
+        $categoriaNueva = $infoLicencia['categoriaLicencia']; //Extrae la categoria de esa licencia
+
+        //Este arreglo nos ayuda a guardar las categorias exclusivas q solo se permiten 1 vez
+        $categoriasExclusivas = ['SO', 'Antivirus', 'Office'];
+
+        if (in_array($categoriaNueva, $categoriasExclusivas)) {
+            $stmt3 = $conexion->prepare("
+                SELECT COUNT(*) 
+                FROM licencias_detalles ld
+                INNER JOIN licencias l ON ld.id_licencia = l.idLicencia
+                INNER JOIN tipolicencias t ON l.idTipoLicencia = t.idTipoLicencia
+                WHERE ld.id_computadora = ? AND t.categoriaLicencia = ?
+            ");
+            $stmt3->execute([$idComputadora, $categoriaNueva]);
+
+            if ($stmt3->fetchColumn() > 0) {
+                return "Bloqueado: La máquina ya tiene un {$categoriaNueva} instalado. Debes desvincularlo primero.";
+            }
+        }
+
+        return true; // Si pasa todas las validaciones, se le da un true
+
     }
 
 }
