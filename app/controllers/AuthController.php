@@ -36,7 +36,8 @@ class AuthController {
             }
         }else{
             //No se pudo iniciar sesion
-            header('Location: ' . BASE_URL . '/');
+            $_SESSION['mensaje_error'] = "¡Usuario o contraseña incorrectos!";
+            header('Location: ' . BASE_URL . '/?error=1');
             exit;
         }
 
