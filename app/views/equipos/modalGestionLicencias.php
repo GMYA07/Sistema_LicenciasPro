@@ -1,5 +1,5 @@
 <div id="modalGestionLicencias" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs transition-all duration-300">
-    <div class="bg-white rounded-2xl border border-gray-200 shadow-xl w-full max-w-2xl overflow-hidden flex flex-col transform transition-all">
+    <div class="bg-white rounded-2xl border border-gray-200 shadow-xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col transform transition-all">
 
         <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-white">
             <div class="flex items-center gap-3">
@@ -19,67 +19,73 @@
         </div>
 
         <div class="p-6 bg-white border-b border-gray-100 shadow-sm z-10 relative">
-            <form id="formVincularLicencia" action="<?= BASE_URL ?>/equipos/area/asignar" method="post" class="flex flex-col sm:flex-row items-end gap-3">
+            <form id="formVincularLicencia" action="<?= BASE_URL ?>/equipos/area/asignar" method="post" class="flex flex-col gap-4">
                 <input type="hidden" name="idComputadora" id="inputAsignarIdPC" value="">
                 <input type="hidden" name="idArea" value="<?= $infoArea['idArea'] ?>">
 
-                <div class="flex-1 w-full">
+                <div>
                     <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
-                        Vincular Nueva Licencia
+                        Licencias Disponibles para Vincular
                     </label>
-                    <div class="relative">
-                        <select name="idLicencia" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:border-[#2CA1C8] focus:bg-white transition-all appearance-none">
+
+                    <div class="border border-gray-200 rounded-xl bg-white max-h-[30vh] overflow-y-auto scroll-elegante">
+                        <table id="tablaModalLicenciasDisponibles" class="w-full text-left text-sm text-gray-700">
+                            <thead class="bg-gray-50 text-xs text-gray-500 uppercase sticky top-0 z-10 border-b border-gray-200">
+                            <tr>
+                                <th class="px-4 py-3 w-10 text-center">✓</th>
+                                <th class="px-4 py-3">Software</th>
+                                <th class="px-4 py-3">Código</th>
+                                <th class="pl-4 pr-8 py-3 text-center">Uso</th>
+                            </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100">
                             <?php if (!empty($licencias)): ?>
-                                <option value="" disabled selected>Selecciona una licencia disponible...</option>
-
                                 <?php foreach ($licencias as $licencia): ?>
-                                    <option value="<?= $licencia["idLicencia"] ?>">
-                                        <?= $licencia["nombreTipoLicencia"] ?> - <?= $licencia["codigoLicencia"] ?>
-                                    </option>
+                                    <tr class="hover:bg-gray-50 transition-colors cursor-pointer" onclick="document.getElementById('check_<?= $licencia['idLicencia'] ?>').click()">
+                                        <td class="pl-4 pr-8 py-3 text-center" onclick="event.stopPropagation()">
+                                            <input type="checkbox" id="check_<?= $licencia['idLicencia'] ?>" name="idLicencias[]" value="<?= $licencia['idLicencia'] ?>" class="w-4 h-4 text-[#2CA1C8] bg-gray-100 border-gray-300 rounded focus:ring-[#2CA1C8] cursor-pointer">
+                                        </td>
+                                        <td class="px-4 py-3 font-medium text-gray-900">
+                                            <?= $licencia["nombreTipoLicencia"] ?>
+                                        </td>
+                                        <td class="px-4 py-3 font-mono text-xs text-gray-500">
+                                            <?= $licencia["codigoLicencia"] ?>
+                                        </td>
+                                        <td class="px-4 py-3 text-center">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                                            <?= $licencia["totalAsignados"] ?> / <?= $licencia["numPermitVinculados"] ?? '∞' ?>
+                                        </span>
+                                        </td>
+                                    </tr>
                                 <?php endforeach; ?>
-
                             <?php else: ?>
-                                <option value="" disabled selected>No hay licencias disponibles para asignar</option>
+                                <tr>
+                                    <td colspan="4" class="px-4 py-8 text-center text-gray-400 text-sm">
+                                        No hay licencias disponibles en este momento.
+                                    </td>
+                                </tr>
                             <?php endif; ?>
-                        </select>
-                        <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-gray-400">
-                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
-                        </div>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 
-                <button type="submit" class="w-full sm:w-auto bg-[#2CA1C8] hover:bg-[#1E85A8] text-white px-5 py-2.5 rounded-xl font-semibold text-sm transition-all shadow-md h-[42px] flex justify-center items-center gap-2 cursor-pointer">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-                    </svg>
-                    Asignar
-                </button>
+                <div class="flex justify-end pt-2">
+                    <button type="submit" class="w-full sm:w-auto bg-[#2CA1C8] hover:bg-[#1E85A8] text-white px-6 py-2.5 rounded-xl font-semibold text-sm transition-all shadow-md flex justify-center items-center gap-2 cursor-pointer <?php echo empty($licencias) ? 'opacity-50 cursor-not-allowed' : ''; ?>" <?php echo empty($licencias) ? 'disabled' : ''; ?>>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                        </svg>
+                        Asignar Seleccionadas
+                    </button>
+                </div>
             </form>
         </div>
 
         <div class="p-6 bg-gray-50/50 flex-1 overflow-hidden flex flex-col">
             <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Software Instalado</h4>
 
-            <div id="listaLicenciasVinculadas" class="overflow-y-auto pr-2 flex flex-col gap-3 max-h-[40vh]">
+            <div id="listaLicenciasVinculadas" class="overflow-y-auto pr-3 flex flex-col gap-3 max-h-[35vh] scroll-elegante">
 
-                <div class="bg-white border border-gray-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
-                    <div class="flex-1">
-                        <div class="flex items-center gap-2 mb-1">
-                            <h4 class="text-sm font-bold text-gray-800">Windows 11 Pro</h4>
-                            <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-emerald-50 text-emerald-600 border border-emerald-200">Vigente</span>
-                        </div>
-                        <p class="text-xs text-gray-500 font-mono bg-gray-50 inline-block px-2 py-1 rounded border border-gray-100 mt-1">
-                            W269N-WFGWX-YVC9B-4J6C9-T83GX
-                        </p>
-                    </div>
-
-                    <button title="Desvincular" class="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 3l18 18" />
-                        </svg>
-                    </button>
-                </div>
             </div>
         </div>
 
