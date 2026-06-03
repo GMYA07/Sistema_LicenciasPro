@@ -10,7 +10,7 @@
 
 <div class="fixed top-6 right-6 z-50 flex flex-col gap-3 pointer-events-none">
 
-    <?php if (isset($_SESSION['mensaje_error'])): ?>
+    <?php if (isset($_GET['error']) && $_GET['error'] == 1): ?>
         <div id="toast-error" class="flex items-center gap-4 bg-white border-l-4 border-red-500 px-5 py-4 rounded-xl shadow-2xl pointer-events-auto transform transition-all duration-500 translate-x-0 opacity-100 max-w-sm w-full">
             <div class="p-2 bg-red-50 rounded-lg text-red-500">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -19,31 +19,12 @@
             </div>
             <div class="flex-1">
                 <h4 class="text-sm font-bold text-gray-900">¡Ups! Algo salió mal</h4>
-                <p class="text-sm text-gray-500 mt-0.5"><?= $_SESSION['mensaje_error']; ?></p>
+                <p class="text-sm text-gray-500 mt-0.5">¡Usuario o contraseña incorrectos!</p>
             </div>
             <button onclick="cerrarToast('toast-error')" class="text-gray-400 hover:text-gray-600 transition-colors">
                 <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
             </button>
         </div>
-        <?php unset($_SESSION['mensaje_error']); ?>
-    <?php endif; ?>
-
-    <?php if (isset($_SESSION['mensaje_exito'])): ?>
-        <div id="toast-success" class="flex items-center gap-4 bg-white border-l-4 border-emerald-500 px-5 py-4 rounded-xl shadow-2xl pointer-events-auto transform transition-all duration-500 translate-x-0 opacity-100 max-w-sm w-full">
-            <div class="p-2 bg-emerald-50 rounded-lg text-emerald-500">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-            </div>
-            <div class="flex-1">
-                <h4 class="text-sm font-bold text-gray-900">¡Operación exitosa!</h4>
-                <p class="text-sm text-gray-500 mt-0.5"><?= $_SESSION['mensaje_exito']; ?></p>
-            </div>
-            <button onclick="cerrarToast('toast-success')" class="text-gray-400 hover:text-gray-600 transition-colors">
-                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-            </button>
-        </div>
-        <?php unset($_SESSION['mensaje_exito']); ?>
     <?php endif; ?>
 
 </div>
