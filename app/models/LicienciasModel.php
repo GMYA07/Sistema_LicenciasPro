@@ -288,6 +288,7 @@ public function actualizarLicencia($idLicencia, array $data)
         WHERE (l.fechaCaducacion IS NULL OR l.fechaCaducacion >= CURDATE())
           AND l.estadoLicencia != 'Expirada'
         HAVING totalAsignados < COALESCE(l.numPermitVinculados, 1)
+        ORDER BY t.nombreTipoLicencia ASC
         ";
         $resultado = $this->db->getConnection()->query($sql);
         return $resultado->fetchAll(PDO::FETCH_ASSOC);
@@ -345,10 +346,32 @@ public function actualizarLicencia($idLicencia, array $data)
 
     public function eliminarRelacionLicenciaEquipo($data){
         try {
-            $stmt = $this->db->getConnection()->prepare("DELETE FROM licencias_detalles WHERE id_computadora = :idComputadora AND id_licencia = :idLicencia");
+            $conexion = $this->db->getConnection();
+
+            //Iniciamos la transacción
+            $conexion->beginTransaction();
+
+            $stmt = $conexion->prepare("DELETE FROM licencias_detalles WHERE id_computadora = :idComputadora AND id_licencia = :idLicencia");
             $stmt->bindParam(':idComputadora', $data['idComputadora']);
             $stmt->bindParam(':idLicencia', $data['idLicencia']);
-            return $stmt->execute();
+            $stmt->execute();
+
+            $stmt2 = $conexion->prepare("
+                UPDATE licencias 
+                SET estadoLicencia = 'NoInstalada' 
+                WHERE idLicencia = :idLicencia1 
+                AND (SELECT COUNT(*) FROM licencias_detalles WHERE id_licencia = :idLicencia2) = 0
+            ");
+
+            $stmt2->execute([
+                'idLicencia1' => $data['idLicencia'],
+                'idLicencia2' => $data['idLicencia']
+            ]);
+
+            $conexion->commit();
+
+            return true;
+
         }catch (exception $e){
             echo $e->getMessage();
             return false;
