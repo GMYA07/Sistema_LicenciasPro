@@ -35,7 +35,7 @@ class EquiposController {
 
         /*Traer las licencias no instaladas para poder instalar*/
         $modeloLicencias = new LicenciasModel();
-        $licencias = $modeloLicencias->obtenerLicenciasPorEstado("NoInstalada");
+        $licencias = $modeloLicencias->obtenerLicenciasDisponiblesInstalacion();
 
         include '../app/views/equipos/equipos_area.php';
 
@@ -216,52 +216,64 @@ class EquiposController {
     }
 
     public function asignarLicencia(){
-        //Recepcion de los datos
-        $idEquipo = trim($_POST['idComputadora'] ?? '');
-        $idArea = trim($_POST['idArea'] ?? '');
-        $idLicencia = trim($_POST['idLicencia'] ?? '');
 
-        //creacion de los modelos
-        $modeloLicencia = new LicenciasModel();
-        $modeloEquipo = new EquipoModel();
+        if($_SERVER['REQUEST_METHOD'] == 'POST'){
+            //variables que ayudara con validacion y redirecciones
+            $idComputadora = $_POST['idComputadora'] ?? null;
+            $idArea = $_POST['idArea'] ?? null;
 
-        //vericamos que la licencia exista
-        if(!$modeloLicencia->obtenerLicenciasPorId($idLicencia)){
-            $_SESSION['mensaje_error'] = "Error al asignar licencia, La licencia no se encuentra registrada.";
+            $licenciasSeleccionadas = $_POST['idLicencias'] ?? []; //Este es el arreglo de las licencias q selecciono
+
+            if (!$idComputadora || empty($licenciasSeleccionadas)) { //Validacion para ver si se selecciono alguna licencia
+                $_SESSION['mensaje_error'] = "Debes seleccionar al menos una licencia.";
+
+                header('Location: ' . BASE_URL . '/equipos/area?idArea=' . $idArea);
+                exit;
+            }
+
+            $modeloLicencias = new LicenciasModel();
+
+            $asignadas = 0; //Contador para saber cuantas se asignaron correctamente
+            $errores = []; //Nos ayudara a guardar los errores de insertar q salgan
+
+            foreach ($licenciasSeleccionadas as $idLicencia) {
+
+                //Pasamos la licencia por el validador
+                $validacion = $modeloLicencias->validarReglasAsignacion($idLicencia, $idComputadora);
+
+                if ($validacion === true) {
+                    //Si dio true, la vinculamos sin miedo
+                    $data = [
+                        'idEquipo' => $idComputadora,
+                        'idLicencia' => $idLicencia
+                    ];
+
+                    $modeloLicencias->asignarLicenciaEquipo($data);
+                    $asignadas++;
+
+                } else {
+                    // 3. Si dio falso, guardamos el mensaje de error para decírselo al usuario
+                    $errores[] = $validacion;
+                }
+            }
+
+            if ($asignadas > 0 && empty($errores)) {
+                //Todo salio bien
+                $_SESSION['mensaje_exito'] = "¡Se vincularon $asignadas licencia(s) correctamente!";
+
+            } elseif ($asignadas > 0 && !empty($errores)) {
+                // Vinculó algunas, pero otras fallaron
+                // Usamos implode para juntar los errores con un salto de línea
+                $_SESSION['mensaje_error'] = "Se vincularon $asignadas, PERO: " . implode(" | ", $errores);
+            } else {
+                // Todas fallaron
+                $_SESSION['mensaje_error'] = implode(" | ", $errores);
+            }
+
             header('Location: ' . BASE_URL . '/equipos/area?idArea=' . $idArea);
             exit;
+
         }
-
-        if(!$modeloEquipo->obtenerEquipoById($idEquipo)){
-            $_SESSION['mensaje_error'] = "Error al asignar licencia, el equipo no se encuentra registrada.";
-            header('Location: ' . BASE_URL . '/equipos/area?idArea=' . $idArea);
-            exit;
-        }
-
-        //Asignaremos la licencia al equipo
-        $data = [
-            'idEquipo' => $idEquipo,
-            'idLicencia' => $idLicencia
-        ];
-
-        //Proceso de asignacion de licencia
-        $exitoVinculo = $modeloLicencia->asignarLicenciaEquipo($data);
-
-        if(!$exitoVinculo){
-            $_SESSION['mensaje_error'] = "Error al asignar licencia, No se pudo asignar la licencia a el equipo.";
-            header('Location: ' . BASE_URL . '/equipos/area?idArea=' . $idArea);
-            exit;
-        }
-
-        //Actualizar el estado de la licencia
-
-
-        //Si se pasaron todas las validaciones pues se asigno esa licencia a ese equipo
-
-        $_SESSION['mensaje_exito'] = "¡La licencia se asigno correctamente!";
-        header('Location: ' . BASE_URL . '/equipos/area?idArea=' . $idArea);
-        exit;
-
 
     }
 
