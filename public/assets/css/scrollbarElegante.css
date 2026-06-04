@@ -1,0 +1,19 @@
+/* Scrollbar moderno y delgado */
+.scroll-elegante::-webkit-scrollbar {
+    width: 6px;
+    height: 6px; /* Por si acaso se activa el scroll horizontal */
+}
+
+.scroll-elegante::-webkit-scrollbar-track {
+    background: transparent;
+    margin: 4px 0; /* Le da un poco de aire en los extremos */
+}
+
+.scroll-elegante::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1; /* Gris claro (slate-300 de Tailwind) */
+    border-radius: 10px;
+}
+
+.scroll-elegante::-webkit-scrollbar-thumb:hover {
+    background-color: #94a3b8; /* Gris más oscuro al pasar el cursor (slate-400) */
+}
