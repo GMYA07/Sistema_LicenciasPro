@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema Licencias Pro</title>
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/style.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/scrollbarElegante.css">
 </head>
 <body class="bg-stone-100 text-stone-800 font-sans flex h-screen overflow-hidden">
 <?php include __DIR__ . '/Sidebar.php'; ?>

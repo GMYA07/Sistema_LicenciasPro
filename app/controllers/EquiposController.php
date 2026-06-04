@@ -187,6 +187,18 @@ class EquiposController {
         }
 
         $modeloEquipo = new EquipoModel();
+        $modeloLicencias = new LicenciasModel();
+
+        $licencias = $modeloLicencias->obtenerLicenciasEquipoVinculado($idEquipo);
+
+        foreach ($licencias as $licencia) {
+            $data = [
+                'idLicencia' => $licencia['idLicencia'],
+                'idComputadora' => $idEquipo
+            ];
+
+            $modeloLicencias->eliminarRelacionLicenciaEquipo($data);
+        }
 
         if($modeloEquipo->eliminarEquipo($idEquipo)){
             $_SESSION['mensaje_exito'] = "¡El equipo se eliminó correctamente!";

@@ -73,6 +73,8 @@ class EquipoModel{
 
     public function eliminarEquipo($idEquipo)
     {
+        //Eliminaremos las relaciones q tenga con licencias los equipos
+
         $stmt = $this->db->getConnection()->prepare("DELETE FROM computadoras WHERE idComputadora = :id");
         return $stmt->execute(['id' => $idEquipo]);
 

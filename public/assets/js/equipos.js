@@ -162,3 +162,50 @@ function confirmarEliminacion(idComputadora) {
         }
     });
 }
+
+document.getElementById('searchInputEquipos').addEventListener('input', function () {
+
+    const query = this.value.toLowerCase();
+
+    const rows = document.querySelectorAll('#computadorasTable tbody tr:not(#sinResultadosComputadoras)');
+
+    let visibles = 0;
+
+    rows.forEach(row => {
+
+        const marca_modelo =
+            row.querySelector('td:nth-child(1)')
+                ?.textContent.toLowerCase() || '';
+
+        const serial =
+            row.querySelector('td:nth-child(2)')
+                ?.textContent.toLowerCase() || '';
+
+        if (marca_modelo.includes(query) || serial.includes(query)) {
+
+            row.style.display = '';
+            visibles++;
+
+        } else {
+
+            row.style.display = 'none';
+
+        }
+
+    });
+
+    // Mostrar mensaje si no hay coincidencias
+    const filaSinResultados =
+        document.getElementById('sinResultadosComputadoras');
+
+    if (filaSinResultados) {
+
+        if (visibles === 0) {
+            filaSinResultados.classList.remove('hidden');
+        } else {
+            filaSinResultados.classList.add('hidden');
+        }
+
+    }
+
+});

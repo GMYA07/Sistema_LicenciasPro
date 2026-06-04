@@ -1,5 +1,5 @@
-<aside
-    class="w-64 bg-[#0C3B4C] text-[#E6E6E6] flex flex-col justify-between shadow-xl transition-all duration-300 h-screen">
+<aside id="miSidebar"
+       class="w-64 bg-[#0C3B4C] text-[#E6E6E6] flex flex-col justify-between shadow-xl transition-transform duration-300 h-screen fixed z-50 inset-y-0 left-0 -translate-x-full md:relative md:translate-x-0">
 
     <div>
         <div class="flex flex-col items-center pt-6 pb-2 border-b border-[#1E85A8]/50">
@@ -79,3 +79,26 @@
     </div>
 
 </aside>
+<div id="sidebarBackdrop"
+     class="fixed inset-0 bg-black/50 z-40 hidden md:hidden"
+     onclick="toggleSidebar()">
+</div>
+
+<button onclick="toggleSidebar()"
+        class="md:hidden p-2 m-4 text-[#0C3B4C] bg-[#2CA1C8] rounded-lg shadow hover:bg-gray-50 transition-colors fixed top-0 left-0 z-30">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+    </svg>
+</button>
+
+<script>
+    function toggleSidebar() {
+        const sidebar = document.getElementById('miSidebar');
+        const backdrop = document.getElementById('sidebarBackdrop');
+
+        // Alterna la clase que lo esconde a la izquierda
+        sidebar.classList.toggle('-translate-x-full');
+        // Alterna el fondo oscuro
+        backdrop.classList.toggle('hidden');
+    }
+</script>
