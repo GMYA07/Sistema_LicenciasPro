@@ -2,6 +2,10 @@
 require_once __DIR__ . '/../models/AreasModel.php';
 require_once __DIR__ . '/../models/EquipoModel.php';
 require_once __DIR__ . '/../models/LicienciasModel.php';
+
+use Dompdf\Dompdf;
+use Dompdf\Options;
+
 class EquiposController {
 
     public function index() {
@@ -312,6 +316,46 @@ class EquiposController {
         }
 
         exit; //ayuda a no mandar html y solo json
+    }
+
+    public function generarReporte(){
+        $idArea = $_GET['idArea'] ?? null;
+
+        if(!$idArea){
+            die("ID de Área no válido");
+        }
+
+        //Modelos para pedir info
+        $modeloEquipos = new EquipoModel();
+        $modeloAreas = new AreasModel();
+
+        $infoArea = $modeloAreas->obtenerArea($idArea);
+        $equipos = $modeloEquipos->obtenerEquiposConLicenciasPorArea($idArea);
+
+        //Con esto se inicia la generacion del pdf
+        ob_start();
+
+        include '../app/views/equipos/plantilla_reporte.php';
+        //Se guarda el html generado de plantilla_reporte
+        $htmlGenerado = ob_get_clean();
+
+        //Configuracion de Dompdf
+        $opciones = new Options();
+        $opciones->set('isHtml5ParserEnabled', true);
+        $opciones->set('isRemoteEnabled', true); // para img
+
+        $dompdf = new Dompdf($opciones);
+
+        //INYECTAR EL HTML Y RENDERIZAR
+        $dompdf->loadHtml($htmlGenerado);
+        $dompdf->setPaper('A4', 'portrait'); // Tamaño A4 en formato Vertical
+        $dompdf->render();
+
+        //el PDF se abre en una pestaña nueva en vez de descargarse de golpe
+        $nombreArchivo = "Reporte_Auditoria_" . str_replace(' ', '_', $infoArea['nombreArea']) . ".pdf";
+        $dompdf->stream($nombreArchivo, ["Attachment" => false]);
+        exit;
+
     }
 
 
