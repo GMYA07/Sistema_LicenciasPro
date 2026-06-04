@@ -17,6 +17,7 @@ $router->post('/equipos/area/delete','EquiposController','eliminarEquipo','auth'
 $router->post('/equipos/area/asignar','EquiposController','asignarLicencia','auth');
 $router->post('/equipos/area/desvincular_licencia','EquiposController','desvincularLicencia','auth');
 $router->get('/equipos/area/obtener_licencias','EquiposController','obtenerLicenciasVinculadas','auth');
+$router->get('/equipos/area/reporte','EquiposController','generarReporte','auth');
 
 // Rutas para licencias
 $router->get('/licencias','LicenciasController','index','auth');
