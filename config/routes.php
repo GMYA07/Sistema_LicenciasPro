@@ -19,6 +19,11 @@ $router->post('/equipos/area/desvincular_licencia','EquiposController','desvincu
 $router->get('/equipos/area/obtener_licencias','EquiposController','obtenerLicenciasVinculadas','auth');
 $router->get('/equipos/area/reporte','EquiposController','generarReporte','auth');
 
+$router->get('/bitacoras', 'BitacorasController', 'index', 'auth');
+$router->get('/bitacoras/create', 'BitacorasController', 'mostrarCrearBitacora', 'auth');
+$router->post('/bitacoras/create', 'BitacorasController', 'guardarBitacora', 'auth');
+$router->get('/bitacoras/obtener_estadisticas', 'BitacorasController', 'obtenerEstadisticasAJAX', 'auth');
+$router->get('/bitacoras/imprimir', 'BitacorasController', 'imprimirBitacora', 'auth');
 // Rutas para licencias
 $router->get('/licencias','LicenciasController','index','auth');
 

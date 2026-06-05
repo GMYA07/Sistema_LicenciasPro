@@ -45,6 +45,19 @@
                     </div>
                 </a>
 
+                <a href="<?= BASE_URL ?>/bitacoras"
+                   class="flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl text-[#E6E6E6] hover:bg-[#1E85A8] hover:text-white transition-all group">
+                    <div class="flex items-center gap-3">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             class="h-5 w-5 text-[#2CA1C8] group-hover:text-white transition-colors" fill="none"
+                             viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                        </svg>
+                        Bitácoras
+                    </div>
+                </a>
+
             </div>
 
             <div>
@@ -68,7 +81,7 @@
 
     <div class="p-4 border-t border-[#1E85A8]/50">
         <a href="<?= BASE_URL ?>/logout"
-            class="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-[#E6E6E6] hover:text-white hover:bg-rose-600 transition-all duration-300 group">
+            class="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-[#E6E6E6] hover:text-white hover:bg-[#1E85A8] hover:transition-all group">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:-translate-x-1 transition-transform"
                 fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round"

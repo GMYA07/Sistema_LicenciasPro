@@ -39,7 +39,7 @@ $categoriasValores = array_column($datosBarras, 'cantidad_licencias');
                 <span class="text-xs font-medium text-gray-500 uppercase tracking-wider block truncate">Licencias
                     Activas</span>
                 <span
-                    class="text-[10px] px-1.5 py-0.5 rounded-lg bg-green-50 text-green-700 font-medium whitespace-nowrap">En
+                    class="text-[10px] px-1.5 py-0.5 rounded-lg bg-green-50 text-[#2CA1C8] font-medium whitespace-nowrap">En
                     uso</span>
             </div>
             <p class="text-2xl font-semibold" style="color:#1E85A8;"><?= htmlspecialchars($licenciasActivas) ?></p>
@@ -50,7 +50,7 @@ $categoriasValores = array_column($datosBarras, 'cantidad_licencias');
             <div class="flex items-center justify-between mb-2">
                 <span class="text-xs font-medium text-gray-500 uppercase tracking-wider block truncate">Equipos</span>
                 <span
-                    class="text-[10px] px-1.5 py-0.5 rounded-lg bg-blue-50 text-blue-700 font-medium whitespace-nowrap">Total</span>
+                    class="text-[10px] px-1.5 py-0.5 rounded-lg bg-blue-50 text-[#2CA1C8] font-medium whitespace-nowrap">Total</span>
             </div>
             <p class="text-2xl font-semibold" style="color:#1E85A8;"><?= htmlspecialchars($totalComputadoras) ?></p>
             <p class="text-[11px] text-gray-400 mt-1 truncate">Infraestructura</p>
@@ -60,9 +60,9 @@ $categoriasValores = array_column($datosBarras, 'cantidad_licencias');
             <div class="flex items-center justify-between mb-2">
                 <span class="text-xs font-medium text-gray-500 uppercase tracking-wider block truncate">Alertas</span>
                 <span
-                    class="text-[10px] px-1.5 py-0.5 rounded-lg bg-amber-50 text-amber-700 font-medium whitespace-nowrap animate-pulse">Atención</span>
+                    class="text-[10px] px-1.5 py-0.5 rounded-lg bg-amber-50 text-[#2CA1C8] font-medium whitespace-nowrap animate-pulse">Atención</span>
             </div>
-            <p class="text-2xl font-semibold text-amber-600"><?= htmlspecialchars($proximasExpirar) ?></p>
+            <p class="text-2xl font-semibold text-[#2CA1C8]"><?= htmlspecialchars($proximasExpirar) ?></p>
             <p class="text-[11px] text-gray-400 mt-1 truncate">Próximos 30 días</p>
         </div>
 
@@ -71,9 +71,9 @@ $categoriasValores = array_column($datosBarras, 'cantidad_licencias');
                 <span class="text-xs font-medium text-gray-500 uppercase tracking-wider block truncate">Áreas
                     Físicas</span>
                 <span
-                    class="text-[10px] px-1.5 py-0.5 rounded-lg bg-purple-50 text-purple-700 font-medium whitespace-nowrap">Sedes</span>
+                    class="text-[10px] px-1.5 py-0.5 rounded-lg bg-purple-50 text-[#2CA1C8] font-medium whitespace-nowrap">Sedes</span>
             </div>
-            <p class="text-2xl font-semibold" style="color:#7C3AED;"><?= htmlspecialchars($totalAreas) ?></p>
+            <p class="text-2xl font-semibold" style="color:#2CA1C8;"><?= htmlspecialchars($totalAreas) ?></p>
             <p class="text-[11px] text-gray-400 mt-1 truncate">Laboratorios</p>
         </div>
 
@@ -235,7 +235,7 @@ $categoriasValores = array_column($datosBarras, 'cantidad_licencias');
             labels: <?= json_encode($estadosLabels) ?>, // Inyección limpia desde PHP
             datasets: [{
                 data: <?= json_encode($estadosValores) ?>, // Inyección limpia desde PHP
-                backgroundColor: ['#10B981', '#F59E0B', '#EF4444'],
+                backgroundColor: ['#2CA1C8', '#1E85A8', '#89D4EA'],
                 borderWidth: 2,
                 borderColor: '#ffffff'
             }]
