@@ -81,7 +81,7 @@
 
     <div class="p-4 border-t border-[#1E85A8]/50">
         <a href="<?= BASE_URL ?>/logout"
-            class="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-[#E6E6E6] hover:text-white hover:bg-rose-600 transition-all duration-300 group">
+            class="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-[#E6E6E6] hover:text-white hover:bg-[#1E85A8] hover:transition-all group">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:-translate-x-1 transition-transform"
                 fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round"
