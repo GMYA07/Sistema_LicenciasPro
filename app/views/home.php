@@ -161,7 +161,8 @@ $categoriasValores = array_column($datosBarras, 'cantidad_licencias');
                     <tbody id="tablaEquiposHome" class="bg-white divide-y divide-gray-100">
                         <?php if (!empty($detalleTabla)): ?>
                             <?php foreach ($detalleTabla as $fila): ?>
-                                <tr class="hover:bg-gray-50/50 transition-colors">
+                                <tr class="hover:bg-gray-50/50 transition-colors"
+                                    data-search="<?= htmlspecialchars(strtolower(($fila['Área'] ?? '') . ' ' . ($fila['Edificio'] ?? '') . ' ' . ($fila['Computadora'] ?? '') . ' ' . ($fila['Licencia'] ?? '') . ' ' . ($fila['Código'] ?? '') . ' ' . ($fila['Vence El'] ?? '')), ENT_QUOTES, 'UTF-8') ?>">
                                     <td class="px-6 py-3.5 whitespace-nowrap">
                                         <div class="text-sm font-medium text-gray-800"><?= htmlspecialchars($fila['Área']) ?>
                                         </div>
@@ -175,7 +176,22 @@ $categoriasValores = array_column($datosBarras, 'cantidad_licencias');
                                         <?= htmlspecialchars($fila['Licencia']) ?>
                                     </td>
                                     <td class="px-6 py-3.5 whitespace-nowrap font-mono text-xs text-gray-500">
-                                        <?= htmlspecialchars($fila['Código']) ?>
+                                        <div class="flex items-center gap-2">
+                                            <code
+                                                class="font-mono text-xs bg-gray-100 border border-gray-200 px-2 py-1 rounded-xl text-gray-700 product-key-home"
+                                                data-key="<?= htmlspecialchars($fila['Código']) ?>">••••••••</code>
+                                            <button type="button"
+                                                class="text-gray-400 hover:text-gray-600 transition-colors toggle-key-visibility-home cursor-pointer"
+                                                aria-label="Mostrar código de licencia">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+                                                    viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                </svg>
+                                            </button>
+                                        </div>
                                     </td>
                                     <td class="px-6 py-3.5 whitespace-nowrap">
                                         <span class="text-xs px-2 py-0.5 rounded-md bg-amber-50 text-amber-800 font-medium">
@@ -255,18 +271,52 @@ $categoriasValores = array_column($datosBarras, 'cantidad_licencias');
 
 <script>
     const buscadorEquiposHome = document.getElementById('buscarEquipoHome');
-    const filasEquiposHome = document.querySelectorAll('#tablaEquiposHome tr');
+    const filasEquiposHome = document.querySelectorAll('#tablaEquiposHome tr[data-search]');
 
     if (buscadorEquiposHome) {
         buscadorEquiposHome.addEventListener('input', () => {
             const termino = buscadorEquiposHome.value.toLowerCase().trim();
 
             filasEquiposHome.forEach((fila) => {
-                const coincide = fila.textContent.toLowerCase().includes(termino);
+                const contenidoFila = (fila.dataset.search || fila.textContent).toLowerCase();
+                const coincide = contenidoFila.includes(termino);
                 fila.style.display = coincide ? '' : 'none';
             });
         });
     }
+
+    document.addEventListener('click', function (event) {
+        const toggleBtn = event.target.closest('.toggle-key-visibility-home');
+        if (!toggleBtn) return;
+
+        const container = toggleBtn.closest('div.flex');
+        if (!container) return;
+
+        const keyElement = container.querySelector('.product-key-home');
+        if (!keyElement) return;
+
+        const actualKey = keyElement.getAttribute('data-key');
+        const isMasked = keyElement.textContent.includes('•');
+
+        if (isMasked) {
+            keyElement.textContent = actualKey;
+            toggleBtn.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.893 7.893L21 21m-6.228-6.228l-3.65-3.65m0 0a3 3 0 104.243 4.243m-4.242-4.243L9.88 9.88" />
+                </svg>
+            `;
+            toggleBtn.setAttribute('aria-label', 'Ocultar código de licencia');
+        } else {
+            keyElement.textContent = '••••••••';
+            toggleBtn.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+            `;
+            toggleBtn.setAttribute('aria-label', 'Mostrar código de licencia');
+        }
+    });
 </script>
 
 <?php include 'inc/Footer.php'; ?>
