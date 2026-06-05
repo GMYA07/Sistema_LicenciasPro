@@ -31,7 +31,7 @@ class LicenciasController
 
                 $idLicencia = $_POST['idLicencia'] ?? null;
                 $numPermit = trim($_POST['numPermitVinculados'] ?? '');
-                $numPermitVinculados = ($numPermit === '') ? 1 : (int)$numPermit;
+                $numPermitVinculados = ($numPermit === '') ? 1 : (int) $numPermit;
 
                 $data = [
                     'idTipoLicencia' => trim($_POST['idTipoLicencia'] ?? ''),
@@ -102,8 +102,8 @@ class LicenciasController
                 }
 
             } catch (Exception $e) {
-        
-                $_SESSION['mensaje_error'] = 'Error al guardar la licencia: ' . $e->getMessage()    ;
+
+                $_SESSION['mensaje_error'] = 'Error al guardar la licencia: ' . $e->getMessage();
             }
         }
     }
@@ -168,10 +168,10 @@ class LicenciasController
         }
     }
 
-    // Resivie datos para la carta de estadisticas de la vista de licencias
+    
     public function obtenerEstadisticas()
     {
-        $estadisticas = $this->licenciasModel->contarComputadorasVinculadas();
+        $estadisticas = $this->licenciasModel->contarLicenciasPorEstado();
         header('Content-Type: application/json');
         echo json_encode($estadisticas);
         exit;

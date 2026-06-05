@@ -153,81 +153,78 @@
 </div>
 
 
-<div class="overflow-x-hidden">
-    <table class="w-full table-fixed divide-y divide-gray-200 align-middle">
+<div class="w-full overflow-x-auto bg-white max-h-[550px]">
+    <table class="w-full divide-y divide-gray-200 align-middle">
         <thead>
-            <tr class="bg-gray-50">
-                <th class="px-3 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+            <tr class="bg-gray-50 whitespace-nowrap">
+                <th
+                    class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider min-w-[180px]">
                     Software / Tipo
                 </th>
-
-                <th class="px-3 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                <th
+                    class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider min-w-[150px]">
                     Código de Licencia
                 </th>
-
-                <th class="px-3 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                <th
+                    class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider min-w-[140px]">
                     Capacidad (Activas/Máx)
                 </th>
-
-                <th class="px-3 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                <th
+                    class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider min-w-[180px]">
                     Equipo Asignado
                 </th>
-
-                <th class="px-3 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                <th
+                    class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider min-w-[130px]">
                     Vencimiento
                 </th>
-
-                <th class="px-3 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                <th
+                    class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider min-w-[110px]">
                     Estado
                 </th>
-
-                <th class="px-3 py-3 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">
+                <th
+                    class="px-4 py-3 text-center text-xs font-medium text-gray-400 uppercase tracking-wider min-w-[100px]">
                     Acciones
                 </th>
             </tr>
         </thead>
 
         <tbody class="bg-white divide-y divide-gray-100">
-
             <?php if (!empty($licencias)): ?>
-
                 <?php foreach ($licencias as $licencia): ?>
-
                     <tr data-search="<?php echo htmlspecialchars(strtolower($licencia['nombreTipoLicencia'] . ' ' . $licencia['codigoLicencia'] . ' ' . $licencia['estadoLicencia']), ENT_QUOTES, 'UTF-8'); ?>"
                         data-estado="<?php echo htmlspecialchars(strtolower($licencia['estadoLicencia']), ENT_QUOTES, 'UTF-8'); ?>">
 
-                        <!-- SOFTWARE -->
-                        <td class="px-3 py-3 whitespace-nowrap">
+                        <td class="px-4 py-3.5">
                             <div class="flex items-center gap-2">
-
                                 <div
                                     class="flex-shrink-0 h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 font-bold text-xs">
-
                                     <?php echo strtoupper(substr($licencia['nombreTipoLicencia'], 0, 2)); ?>
-
                                 </div>
-
                                 <div>
-                                    <p class="text-sm font-semibold text-gray-800">
+                                    <p class="text-sm font-semibold text-gray-800 whitespace-nowrap">
                                         <?php echo htmlspecialchars($licencia['nombreTipoLicencia']); ?>
                                     </p>
-
                                     <p class="text-xs text-gray-400">
                                         Categoría de software
                                     </p>
                                 </div>
-
                             </div>
                         </td>
 
-                        <!-- CÓDIGO -->
-                        <td class="px-3 py-3 whitespace-nowrap">
+                        <td class="px-4 py-3.5">
                             <div class="flex items-center gap-2">
-                                <code class="font-mono text-xs bg-gray-100 border border-gray-200 px-2 py-1 rounded-xl text-gray-700 product-key" data-key="<?php echo htmlspecialchars($licencia['codigoLicencia']); ?>">••••••••</code>
-                                <button type="button" class="text-gray-400 hover:text-gray-600 transition-colors toggle-key-visibility cursor-pointer" aria-label="Mostrar clave">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                <code
+                                    class="font-mono text-xs bg-gray-100 border border-gray-200 px-2 py-1 rounded-xl text-gray-700 product-key"
+                                    data-key="<?php echo htmlspecialchars($licencia['codigoLicencia']); ?>">••••••••</code>
+                                <button type="button"
+                                    class="text-gray-400 hover:text-gray-600 transition-colors toggle-key-visibility cursor-pointer"
+                                    aria-label="Mostrar clave">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                                        stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                     </svg>
                                 </button>
                             </div>
@@ -236,13 +233,13 @@
                             </p>
                         </td>
 
-                        <!-- CAPACIDAD -->
-                        <td class="px-3 py-3 whitespace-nowrap">
-                            <div class="flex items-center gap-2">
-                                <?php 
-                                $totalAsignados = (int)($licencia['totalAsignados'] ?? 0);
-                                $numPermitVinculados = (int)($licencia['numPermitVinculados'] ?? 1);
-                                if ($numPermitVinculados < 1) $numPermitVinculados = 1;
+                        <td class="px-4 py-3.5">
+                            <div class="flex flex-col gap-1">
+                                <?php
+                                $totalAsignados = (int) ($licencia['totalAsignados'] ?? 0);
+                                $numPermitVinculados = (int) ($licencia['numPermitVinculados'] ?? 1);
+                                if ($numPermitVinculados < 1)
+                                    $numPermitVinculados = 1;
                                 $porcentaje = round(($totalAsignados / $numPermitVinculados) * 100);
                                 $colorProgreso = 'bg-cyan-500';
                                 if ($totalAsignados >= $numPermitVinculados) {
@@ -252,22 +249,23 @@
                                 <span class="text-sm font-semibold text-gray-700">
                                     <?php echo $totalAsignados; ?> / <?php echo $numPermitVinculados; ?>
                                 </span>
-                            </div>
-                            <div class="w-24 bg-gray-200 rounded-full h-1.5 mt-1 overflow-hidden">
-                                <div class="<?php echo $colorProgreso; ?> h-1.5 rounded-full" style="width: <?php echo min($porcentaje, 100); ?>%"></div>
+                                <div class="w-24 bg-gray-200 rounded-full h-1.5 overflow-hidden">
+                                    <div class="<?php echo $colorProgreso; ?> h-1.5 rounded-full"
+                                        style="width: <?php echo min($porcentaje, 100); ?>%"></div>
+                                </div>
                             </div>
                         </td>
 
-                        <!-- EQUIPO -->
-                        <td class="px-3 py-3">
+                        <td class="px-4 py-3.5">
                             <?php if (!empty($licencia['computadorasAsignadas'])): ?>
-                                <ul class="list-disc list-inside text-xs text-green-700 font-medium space-y-0.5">
+                                <ul
+                                    class="list-disc list-inside text-xs text-green-700 font-medium space-y-0.5 max-w-[200px] break-words">
                                     <?php foreach (explode('||', $licencia['computadorasAsignadas']) as $comp): ?>
                                         <li><?php echo htmlspecialchars($comp); ?></li>
                                     <?php endforeach; ?>
                                 </ul>
                             <?php else: ?>
-                                <span class="text-xs text-red-500 font-semibold">
+                                <span class="text-xs text-red-500 font-semibold block">
                                     Sin equipos asignados
                                 </span>
                             <?php endif; ?>
@@ -276,69 +274,43 @@
                             </p>
                         </td>
 
-                        <!-- FECHA -->
-                        <td class="px-3 py-3 whitespace-nowrap">
-
-                            <p class="text-sm text-gray-700">
-
+                        <td class="px-4 py-3.5">
+                            <p class="text-sm text-gray-700 whitespace-nowrap">
                                 <?php
                                 if (!empty($licencia['fechaCaducacion']) && $licencia['fechaCaducacion'] !== '0000-00-00') {
-
                                     $fecha = new DateTime($licencia['fechaCaducacion']);
                                     echo $fecha->format('d M Y');
-
                                 } else {
-
-                                    echo 'Sin fecha de vencimiento';
+                                    echo 'Sin fecha';
                                 }
                                 ?>
-
                             </p>
-
                             <p class="text-xs text-gray-400">
-                                Fecha de vencimiento
+                                Vencimiento
                             </p>
-
                         </td>
 
-                        <!-- ESTADO -->
-                        <td class="px-3 py-3 whitespace-nowrap">
-
+                        <td class="px-4 py-3.5">
                             <?php
-
                             $estado = $licencia['estadoLicencia'];
-
                             $estadoMostrar = str_replace('NoInstalada', 'No instalada', $estado);
-
                             $color = 'gray';
 
                             if ($estado === 'Instalada') {
-
                                 $color = 'green';
-
                             } elseif ($estado === 'Expirada') {
-
                                 $color = 'red';
-
                             } elseif ($estado === 'NoInstalada') {
-
                                 $color = 'blue';
                             }
-
                             ?>
-
                             <span
-                                class="text-[10px] px-2 py-0.5 rounded-md bg-<?php echo $color; ?>-50 text-<?php echo $color; ?>-700 font-bold whitespace-nowrap">
-
+                                class="text-[10px] px-2 py-0.5 rounded-md bg-<?php echo $color; ?>-50 text-<?php echo $color; ?>-700 font-bold whitespace-nowrap inline-block">
                                 <?php echo htmlspecialchars($estadoMostrar); ?>
-
                             </span>
-
                         </td>
 
-                        <!-- ACCIONES -->
-                        <td class="px-3 py-3 whitespace-nowrap text-center">
-
+                        <td class="px-4 py-3.5 text-center">
                             <button type="button"
                                 class="inline-flex items-center justify-center p-2 rounded-lg bg-cyan-50 text-[#2CA1C8] hover:bg-cyan-100 transition-all cursor-pointer"
                                 title="Editar licencia" aria-label="Editar licencia"
@@ -350,48 +322,30 @@
                                 data-fechacad="<?php echo htmlspecialchars($licencia['fechaCaducacion'], ENT_QUOTES, 'UTF-8'); ?>"
                                 data-numpermit="<?php echo (int) ($licencia['numPermitVinculados'] ?? 1); ?>"
                                 onclick="prepararEdicion(this)">
-
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
                                     stroke="currentColor" stroke-width="2">
-
                                     <path stroke-linecap="round" stroke-linejoin="round"
                                         d="M16.862 4.487a2.75 2.75 0 113.889 3.89L8.25 20.878 3 22l1.122-5.25L16.862 4.487z" />
-
                                 </svg>
-
                             </button>
-
                         </td>
-
                     </tr>
-
                 <?php endforeach; ?>
 
                 <tr id="sinResultadosLicencias" class="hidden">
-
-                    <td colspan="8" class="px-3 py-6 text-center text-sm text-gray-400">
+                    <td colspan="7" class="px-4 py-6 text-center text-sm text-gray-400">
                         No se encontraron licencias con esos criterios.
                     </td>
-
                 </tr>
-
             <?php else: ?>
-
                 <tr>
-
-                    <td colspan="8" class="px-3 py-4 text-center text-xs text-gray-400">
+                    <td colspan="7" class="px-4 py-6 text-center text-xs text-gray-400">
                         No hay licencias registradas. ¡Agrega tu primera licencia!
                     </td>
-
                 </tr>
-
             <?php endif; ?>
-
         </tbody>
     </table>
-</div>
-</div>
-
 </div>
 
 <!-- ========================================== -->
@@ -405,12 +359,14 @@
         <!-- Header Modal -->
         <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-white">
             <div>
-                <h3 id="encabesadoModal" name="encabesadoModal" class=" text-lg font-bold text-[#0C3B4C]">Registrar Nueva Licencia</h3>
-                <p id="suptituloEcabesadoModal" class="text-xs text-gray-400">Llena los datos para añadir un software al inventario</p>
+                <h3 id="encabesadoModal" name="encabesadoModal" class=" text-lg font-bold text-[#0C3B4C]">Registrar
+                    Nueva Licencia</h3>
+                <p id="suptituloEcabesadoModal" class="text-xs text-gray-400">Llena los datos para añadir un software al
+                    inventario</p>
             </div>
             <button onclick="cerrarModal('modalLicencia')"
                 class="text-gray-400 hover:text-gray-600 p-1.5 hover:bg-gray-100 rounded-xl transition-all">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
             </button>
         </div>
@@ -470,7 +426,8 @@
 
             <!-- Capacidad de Licencia (numPermitVinculados) -->
             <div>
-                <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Capacidad Máxima de Equipos Vinculados (Activaciones)</label>
+                <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Capacidad Máxima
+                    de Equipos Vinculados (Activaciones)</label>
                 <input type="number" id="numPermitVinculados" name="numPermitVinculados" required min="1" value="1"
                     placeholder="Ej: 5"
                     class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#2CA1C8] focus:bg-white transition-all">
@@ -483,7 +440,7 @@
                 <div class="relative">
                     <select id="estadoLicencia" name="estadoLicencia" required
                         class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:border-[#2CA1C8] focus:bg-white transition-all appearance-none">
-                        <option value="Instalada" >Instalada</option>
+                        <option value="Instalada">Instalada</option>
                         <option value="Expirada">Expirada</option>
                         <option value="NoInstalada" selected>No instalada</option>
                     </select>
@@ -569,8 +526,7 @@
 
         <div class="p-6 flex flex-col gap-6">
             <!-- Mini Formulario -->
-            <form id="formNuevoTipo"
-                class="bg-gray-50 border border-gray-100 p-4 rounded-xl flex flex-col gap-3">
+            <form id="formNuevoTipo" class="bg-gray-50 border border-gray-100 p-4 rounded-xl flex flex-col gap-3">
                 <input type="hidden" id="idTipoLicenciaTipo" name="idTipoLicencia" value="">
 
                 <div class="flex flex-col sm:flex-row gap-3 w-full items-end">
@@ -596,7 +552,8 @@
                             <option value="Antivirus">Antivirus</option>
                             <option value="Otros">Otros</option>
                         </select>
-                        <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-gray-400 pt-7">
+                        <div
+                            class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-gray-400 pt-7">
                             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                             </svg>
@@ -626,7 +583,8 @@
 
             <!-- Tabla de Tipos Existentes -->
             <div class="flex flex-col">
-                <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Categorías Registradas</label>
+                <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Categorías
+                    Registradas</label>
                 <div class="border border-gray-200 rounded-xl overflow-hidden max-h-52 overflow-y-auto bg-white">
                     <table class="min-w-full divide-y divide-gray-200 text-sm">
                         <tbody class="bg-white divide-y divide-gray-100">
@@ -635,7 +593,8 @@
                                     <tr>
                                         <td class="px-4 py-2.5 text-gray-700 font-medium">
                                             <?php echo htmlspecialchars($tipo['nombreTipoLicencia']); ?>
-                                            <span class="ml-2 text-[10px] px-2 py-0.5 rounded-full bg-cyan-50 text-[#2CA1C8] font-bold border border-cyan-100">
+                                            <span
+                                                class="ml-2 text-[10px] px-2 py-0.5 rounded-full bg-cyan-50 text-[#2CA1C8] font-bold border border-cyan-100">
                                                 <?php echo htmlspecialchars($tipo['categoriaLicencia'] ?? 'Otros'); ?>
                                             </span>
                                         </td>
